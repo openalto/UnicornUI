@@ -1,0 +1,149 @@
+{
+    "version": 1,
+    "allow_edit": true,
+    "plugins": [],
+    "panes": [
+        {
+            "width": 1,
+            "row": {
+                "2": 15,
+                "3": 5
+            },
+            "col": {
+                "2": 1,
+                "3": 1
+            },
+            "col_width": 1,
+            "widgets": [
+                {
+                    "type": "text_widget",
+                    "settings": {
+                        "title": "s1 sending rate",
+                        "size": "regular",
+                        "value": "(datasources[\"System Dashboard Flask\"][\"s1-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+                        "sparkline": true,
+                        "animate": false,
+                        "units": "Mbps"
+                    }
+                }
+            ]
+        },
+        {
+            "width": 1,
+            "row": {
+                "2": 15,
+                "3": 5
+            },
+            "col": {
+                "2": 1,
+                "3": 1
+            },
+            "col_width": 1,
+            "widgets": [
+                {
+                    "type": "text_widget",
+                    "settings": {
+                        "title": "d1 sending rate",
+                        "size": "regular",
+                        "value": "(datasources[\"System Dashboard Flask\"][\"s3-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+                        "sparkline": true,
+                        "animate": false,
+                        "units": "Mbps"
+                    }
+                }
+            ]
+        },
+        {
+            "width": 1,
+            "row": {
+                "2": 15,
+                "3": 5
+            },
+            "col": {
+                "2": 1,
+                "3": 1
+            },
+            "col_width": 1,
+            "widgets": [
+                {
+                    "type": "text_widget",
+                    "settings": {
+                        "title": "s2 sending rate",
+                        "size": "regular",
+                        "value": "(datasources[\"System Dashboard Flask\"][\"s2-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+                        "sparkline": true,
+                        "animate": false,
+                        "units": "Mbps"
+                    }
+                }
+            ]
+        },
+        {
+            "width": 1,
+            "row": {
+                "2": 15,
+                "3": 5
+            },
+            "col": {
+                "2": 1,
+                "3": 1
+            },
+            "col_width": 1,
+            "widgets": [
+                {
+                    "type": "text_widget",
+                    "settings": {
+                        "title": "d2 sending rate",
+                        "size": "regular",
+                        "value": "(datasources[\"System Dashboard Flask\"][\"s4-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+                        "sparkline": true,
+                        "animate": false,
+                        "units": "Mbps"
+                    }
+                }
+            ]
+        },
+        {
+            "width": 2,
+            "row": {
+                "2": 1,
+                "3": 1
+            },
+            "col": {
+                "2": 1,
+                "3": 1
+            },
+            "col_width": 1,
+            "widgets": [
+                {
+                    "type": "text_widget",
+                    "settings": {
+                        "size": "regular",
+                        "value": "datasources[\"Clock\"][\"time_string_value\"]",
+                        "animate": true
+                    }
+                }
+            ]
+        }
+    ],
+    "datasources": [
+        {
+            "name": "System Dashboard Flask",
+            "type": "JSON",
+            "settings": {
+                "url": "/_network_data",
+                "use_thingproxy": false,
+                "refresh": 1,
+                "method": "GET"
+            }
+        },
+        {
+            "name": "Clock",
+            "type": "clock",
+            "settings": {
+                "refresh": 1
+            }
+        }
+    ],
+    "columns": 2
+}
