@@ -38,7 +38,20 @@ var submit_task = function () {
   $.getJSON($SCRIPT_ROOT + "/_submit_task", {
     text: submit_task_text
   }, function (data) {
-    $("#rsa-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+    obj = JSON.parse(data.result)
+    $("#rsa-result").text(JSON.stringify(obj, null, 2))
+    s = "Resource constraints are: \n\n"
+    for (var i = 0; i < obj["ane-matrix"].length; i += 1){
+      vector = obj["ane-matrix"][i];
+      limit = obj["anes"][i];
+      flow_name_list = []
+      for (var j = 0; j < vector.length; j += 1) {
+          flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
+      }
+      flow_name_list.sort()
+      s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
+    }
+    $("#rsa-result-human-readable").text(s)
   })
 };
 
@@ -47,7 +60,21 @@ var calculate_bandwidth = function () {
   $.getJSON($SCRIPT_ROOT + "/_calculate_bandwidth", {
     text: rsa_result
   }, function (data) {
+    obj = JSON.parse(data.result)
     $("#bandwidth-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+    obj = obj["flows"]
+    s = "Optimal reservation: \n\n"
+    for (var i = 0; i < obj.length; i += 1) {
+      flow_name = "flow " + obj[i]["flow-id"]
+      bw = obj[i]["bandwidth"]
+      s += `    ${flow_name}: ${bw} Kbps\n`
+    }
+    $("#bandwidth-result-human-readable").text(s)
+    setTimeout(function () {
+      s = $("#bandwidth-result-human-readable").text()
+      s += "\nReserve successfully\n"
+      $("#bandwidth-result-human-readable").text(s)
+    }, 1500)
   })
 };
 
@@ -166,26 +193,32 @@ var stop_task = function () {
         <div class="col-3">
             <p style="margin-top: 40%;">Response: </p>
         </div>
-        <div class="col-9">
+        <div class="col-4">
             <pre><code class="json" id="rsa-result"></code></pre>
+        </div>
+        <div class="col-5">
+            <pre><code class="json" id="rsa-result-human-readable" style="margin-top: 40%"></code></pre>
         </div>
     </div>
 
     <hr/>
     <br/>
-    <h1>Calculate Reserving Solution</h1>
+    <h1>Calculating and Reserving Optimal Resources</h1>
     <hr/>
     <br/>
 
     <div class="row">
         <div class="col-3">
             <button type="button" class="btn btn-primary" style="margin-top: 10%" onclick="calculate_bandwidth()">
-                Calculate
+                Calculate and Reserve
             </button>
             <p style="margin-top: 10%;">Response: </p>
         </div>
-        <div class="col-9">
+        <div class="col-4">
             <pre><code class="json" id="bandwidth-result"></code></pre>
+        </div>
+        <div class="col-4">
+            <pre><code class="json" id="bandwidth-result-human-readable"></code></pre>
         </div>
     </div>
 
