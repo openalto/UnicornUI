@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" href="/static/code-styles/tomorrow.css">
 
-    <title>Unicorn UI</title>
+    <title>Unicorn and SFP Demo (AFM 2018)</title>
 
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
@@ -33,32 +33,41 @@
 <script>hljs.initHighlightingOnLoad();</script>
 
 <script>
-    var submit_task = function () {
-        submit_task_text = $("#submit_task_json").text();
-        $.getJSON($SCRIPT_ROOT + "/_submit_task", {
-            text: submit_task_text
-        }, function (data) {
-            $("#rsa-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
-        })
-    };
+var submit_task = function () {
+  submit_task_text = $("#submit_task_json").text();
+  $.getJSON($SCRIPT_ROOT + "/_submit_task", {
+    text: submit_task_text
+  }, function (data) {
+    $("#rsa-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+  })
+};
 
-    var calculate_bandwidth = function () {
-        rsa_result = $("#rsa-result").text();
-        $.getJSON($SCRIPT_ROOT + "/_calculate_bandwidth", {
-            text: rsa_result
-        }, function (data) {
-            $("#bandwidth-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
-        })
-    };
+var calculate_bandwidth = function () {
+  rsa_result = $("#rsa-result").text();
+  $.getJSON($SCRIPT_ROOT + "/_calculate_bandwidth", {
+    text: rsa_result
+  }, function (data) {
+    $("#bandwidth-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+  })
+};
 
-    var run_task = function () {
-        bandwidth_result = $("#bandwidth-result").text();
-        $.getJSON($SCRIPT_ROOT + "/_run_task", {
-            text: bandwidth_result
-        }, function (data) {
-            $("#run-task-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
-        })
-    };
+var run_task = function () {
+  bandwidth_result = $("#bandwidth-result").text();
+  $.getJSON($SCRIPT_ROOT + "/_run_task", {
+    text: bandwidth_result
+  }, function (data) {
+    $("#run-task-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+  })
+};
+
+var reserve_request = function () {
+  reserve_request_json = $("#reserve_request_json").text();
+  $.getJSON($SCRIPT_ROOT + "/_on_demand_pce", {
+    text: reserve_request_json
+  }, function (data) {
+    $("#reserve-request-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
+  })
+};
 </script>
 
 <div class="container">
@@ -74,24 +83,47 @@
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#topology">Topology</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#start">Start</a>
-                </li>
-                <li class="nav-item">
-                    <!-- <a class="nav-link" href="{{ url_for("dashboard") }}">Dashboard</a> -->
-                    <a class="nav-link" href="#dashboard">Dashboard</a>
+                    <a class="nav-link" href="#">About</a>
                 </li>
             </ul>
         </div>
     </nav>
 
     <div class="jumbotron">
-        <h1 id="topology">Topology</h1>
-        <hr class="my-4">
-        <iframe src="/static/pdfs/intro-topo-exam.pdf" style="width:100%; height:400px;" frameborder="0"></iframe>
+      <h1>Unicorn and SFP Demo (AFM 2018)</h1>
+      <hr class="my-4">
+      <p>
+      This is a demo system for Unicorn and SDN Federation Protocol (SFP). We will use it to demonstrate the efficiency and efficacy of Unicorn and SFP in the following cases.
+      </p>
+    </div>
 
+    <div class="row">
+      <div class="col-12">
+        <ul class="nav nav-tabs" id="demo-cases" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="case1-tab" data-toggle="tab" href="#case1" role="tab" aria-controls="case1" aria-selected="true">Case 1</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="case2-tab" data-toggle="tab" href="#case2" role="tab" aria-controls="case2" aria-selected="false">Case 2</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="case3-tab" data-toggle="tab" href="#case3" role="tab" aria-controls="case3" aria-selected="false">Case 3</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="case4-tab" data-toggle="tab" href="#case4" role="tab" aria-controls="case4" aria-selected="false">Case 4</a>
+          </li>
+        </ul>
+
+
+          <div class="tab-content" id="show-cases">
+            <!-- Show Case 1 -->
+            <div class="tab-pane fade show active" id="case1" role="tabpanel" aria-labelledby="case1-tab">
+              <div class="container">
+                <!-- Original Case 1 View -->
+    <div class="jumbotron">
+      <h1 id="topology">Topology</h1>
+      <hr class="my-4">
+      <iframe src="/static/pdfs/intro-topo-exam.pdf" style="width:100%; height:400px;" frameborder="0"></iframe>
     </div>
 
     <h1 id="start">Start</h1>
@@ -181,6 +213,69 @@
         <div class="col-12">
             <iframe src="/dashboard#source=/static/dashboard.json" width="100%" height="400px" />
         </div>
+    </div>
+              </div>
+            </div>
+
+            <!-- Show Case 2 -->
+            <div class="tab-pane fade" id="case2" role="tabpanel" aria-labelledby="case2-tab">
+              <div class="container">
+
+    <h1>On-Demand Path Setup</h1>
+    <hr/>
+    <br/>
+
+    <div class="row">
+        <div class="col-3">
+            <div class="container">
+                <button type="button" class="btn btn-primary" style="margin-top: 30%" onclick="reserve_request()">Reserve Request
+                </button>
+
+                <p style="margin-top: 20%;">JSON object summitted to orchestrator: </p>
+            </div>
+        </div>
+        <div class="col-9">
+        <pre><code class="json" id="reserve_request_json">
+[{
+  "id": 1,
+  "jobs": [
+    {
+      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
+      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ],
+      "demand": { "min-bw": 20000, "pass-to-dpi": true }
+    },
+    {
+      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
+      "potential_dsts": [ { "ip": "10.0.1.202", "port": 5678 } ],
+      "demand": { "min-bw": 30000, "pass-to-dpi": true }
+    }
+  ]
+}]
+        </code></pre>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3">
+        <p style="margin-top: 10%;">Response: </p>
+      </div>
+      <div class="col-9">
+        <pre><code class="json" id="reserve-request-result"></code></pre>
+      </div>
+    </div>
+
+              </div>
+            </div>
+
+            <!-- Show Case 3 -->
+            <div class="tab-pane fade" id="case3" role="tabpanel" aria-labelledby="case3-tab">
+            </div>
+
+            <!-- Show Case 4 -->
+            <div class="tab-pane fade" id="case4" role="tabpanel" aria-labelledby="case4-tab">
+            </div>
+          </div>
+      </div>
     </div>
 
 </div>

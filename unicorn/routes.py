@@ -45,6 +45,13 @@ def _run_task():
     return jsonify(result=r.text)
 
 
+@app.route("/_on_demand_pce")
+def _on_demand_pce():
+    req_str = request.args.get('text')
+    r = requests.post(app.config["ON_DEMAND_PCE_URL"], data=req_str, headers={'content-type': 'application/json'})
+    return jsonify(result=r.text)
+
+
 @app.route("/_network_data")
 def _network_data():
     network_data_start = psutil.net_io_counters(pernic=True)
