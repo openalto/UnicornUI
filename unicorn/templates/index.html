@@ -99,6 +99,15 @@ var reserve_request = function () {
 var stop_task = function () {
     $.getJSON($SCRIPT_ROOT + "/_stop_task", {}, function (data) {})
 }
+
+var clear_texts = function () {
+  $("#rsa-result").text("")
+  $("#rsa-result-human-readable").text("")
+  $("#run-task-result").text("")
+  $("#reserve-request-result").text("")
+  $("#bandwidth-result").text("")
+  $("#bandwidth-result-human-readable").text("")
+}
 </script>
 
 <div class="container">
@@ -166,6 +175,9 @@ var stop_task = function () {
             <div class="container">
                 <button type="button" class="btn btn-primary" style="margin-top: 30%" onclick="submit_task()">Submit a
                     task
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-top: 30%" onclick="clear_texts()">
+                    Clear all
                 </button>
 
                 <p style="margin-top: 20%;">JSON object summitted to orchestrator: </p>
