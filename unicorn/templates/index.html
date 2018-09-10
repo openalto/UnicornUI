@@ -68,6 +68,10 @@ var reserve_request = function () {
     $("#reserve-request-result").text(JSON.stringify(JSON.parse(data.result), null, 2))
   })
 };
+
+var stop_task = function () {
+    $.getJSON($SCRIPT_ROOT + "/_stop_task", {}, function (data) {})
+}
 </script>
 
 <div class="container">
@@ -195,6 +199,9 @@ var reserve_request = function () {
         <div class="col-3">
             <button type="button" class="btn btn-primary" style="margin-top: 10%" onclick="run_task()">
                 Run task
+            </button>
+            <button type="button" class="btn btn-danger" style="margin-top: 10%" onclick="stop_task()">
+                Stop task
             </button>
             <p style="margin-top: 10%;">Response: </p>
         </div>

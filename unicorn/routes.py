@@ -45,6 +45,12 @@ def _run_task():
     return jsonify(result=r.text)
 
 
+@app.route("/_stop_task")
+def _stop_task():
+    r = requests.post(app.config["STOP_TASK_URL"])
+    return jsonify(result=r.text)
+
+
 @app.route("/_on_demand_pce")
 def _on_demand_pce():
     req_str = request.args.get('text')
@@ -64,7 +70,7 @@ def _network_data():
         data[intf] = {
             "sent_bytes_sec": (network_data[intf][0] - network_data_start[intf][0] / app.config["MONITORING_INTERVAL"]),
             "received_bytes_sec": (
-                        network_data[intf][1] - network_data_start[intf][1] / app.config["MONITORING_INTERVAL"])
+                    network_data[intf][1] - network_data_start[intf][1] / app.config["MONITORING_INTERVAL"])
         }
 
     return json.dumps(data)
