@@ -44,7 +44,7 @@
   }
 
   var submit_task_case1 = function () {
-    call_orchestrator("/_submit_task", $("#submit_task_json_case1").getValue(),
+    call_orchestrator("/_submit_task", $("#submit_task_json_case1").text(),
       "#rsa-result-case1", function (obj) {
         s = "Resource constraints are: \n\n"
         for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
@@ -95,7 +95,7 @@
   };
 
   var submit_task_case2 = function () {
-    call_orchestrator("/_submit_task", $("#submit_task_json_case2").getValue(),
+    call_orchestrator("/_submit_task", $("#submit_task_json_case2").text(),
       "#rsa-result-case2", function (obj) {
         s = "Resource constraints are: \n\n"
         for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
