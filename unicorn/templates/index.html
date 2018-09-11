@@ -155,8 +155,29 @@ var calculate_md_bandwidth = function () {
     });
 };
 
+var as_path_result1 = `{
+  "next-ingress-point": [ "172.17.1.1", "172.17.1.1" ]
+}`;
+
+var as_path_result2 = `{
+  "next-ingress-point": [ "172.17.2.1", "172.17.2.1" ]
+}`;
+
+var as_path_result3 = `{
+  "next-ingress-point": [ "", "" ]
+}`;
+
 var as_path_query = function () {
-  // TODO: Query as-level path for the given set of flows
+  // Demo query as-level path for the given set of flows
+  setTimeout(function () {
+    $("#as-path-result1").text(as_path_result1);
+    setTimeout(function () {
+      $("#as-path-result2").text(as_path_result2);
+      setTimeout(function () {
+        $("#as-path-result3").text(as_path_result3);
+      }, Math.random()*300 + 200);
+    }, Math.random()*300 + 200);
+  }, Math.random()*300 + 200);
 };
     </script>
 
@@ -443,7 +464,7 @@ s2 --- sw2     sw7     sw4 --- d2
       "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
     },
     {
-      "potential_srcs": [ { "ip": "10.0.2.102", "port": 3456 } ],
+      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
       "potential_dsts": [ { "ip": "10.0.2.202", "port": 5678 } ]
     }
   ]
@@ -622,7 +643,10 @@ s2 --- sw2     sw7     sw4 --- d2
                 <div class="row">
                   <div class="col-3">
                     <div class="container">
-                      <button type="button" class="btn btn-primary" style="margin-top: 30%" onclick="as_path_query()">Query AS-Level Path</button>
+                      <p>In some scenarios, the client does not know the AS-level path information about the flows it wants to start. We will show how the Unicorn system works in these scenarios.</p>
+                      <p>In the Unicorn system, each site will be installed a domain agent to explore the AS next hop for the potential flows. Each domain agent will run SFP speaker to interactive with its peered site. For those flows one site does not know how to forward, the SFP speaker will send the request to its peered and get the reply to make the forwarding decision.</p>
+                      <p>Then the client can send the path query request to each domain agent to get the information of the next AS hop</p>
+                      <p>Click <button type="button" class="btn btn-primary" onclick="as_path_query()">Query AS-Level Path</button> to get the AS-level path by query the domain agents sequentially.</p>
                     </div>
                   </div>
                   <div class="col-9">
@@ -633,10 +657,10 @@ s2 --- sw2     sw7     sw4 --- d2
   "jobs": [
     {
       "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
+      "potential_dsts": [ { "ip": "10.0.2.201", "port": 2345 } ]
     },
     {
-      "potential_srcs": [ { "ip": "10.0.2.102", "port": 3456 } ],
+      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
       "potential_dsts": [ { "ip": "10.0.2.202", "port": 5678 } ]
     }
   ]
@@ -647,18 +671,16 @@ s2 --- sw2     sw7     sw4 --- d2
 
                 <div class="row">
                   <div class="col-3">
-                    <p>Give some description for this step here.</p>
+                    <p>The response received from each domain shown in the right side.</p>
                   </div>
 
-                  <div class="col-4">
+                  <div class="col-9">
                     <p>Response:</p>
-                    <pre><code></code></pre>
+                    <pre><code type="json" id="as-path-result1"></code></pre>
+                    <pre><code type="json" id="as-path-result2"></code></pre>
+                    <pre><code type="json" id="as-path-result3"></code></pre>
                   </div>
 
-                  <div class="col-4">
-                    <p>Human Readable Response:</p>
-                    <pre><code></code></pre>
-                  </div>
                 </div><!-- Response Row End -->
 
                 <div class="row">
