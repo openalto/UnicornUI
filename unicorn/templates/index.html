@@ -241,25 +241,18 @@ var as_path_query = function () {
                 </div>
 
                 <h1 id="start">Start</h1>
-                <hr/>
-                <br/>
+                <hr/><br/>
 
                 <div class="row">
                   <div class="col-3">
-                    <div class="container">
-                      <button type="button" class="btn btn-primary" style="margin-top: 30%" onclick="submit_task()">Submit a
-                        task
-                      </button>
-                      <button type="button" class="btn btn-secondary" style="margin-top: 30%" onclick="clear_texts()">
-                        Clear all
-                      </button>
-
-                      <p style="margin-top: 20%;">JSON object summitted to orchestrator: </p>
-                    </div>
+                    <p>The first case is very simple. All the routes are fixed and have been deployed. You only need to
+                    <button type="button" class="btn btn-primary" onclick="submit_task()">Submit a
+                      Task
+                    </button></p>
                   </div>
                   <div class="col-9">
-                    <pre><code class="json" id="submit_task_json">
-[{
+                    <p>JSON object summitted to orchestrator:</p>
+                    <pre><code class="json" id="submit_task_json">[{
   "id": 1,
   "jobs": [
     {
@@ -271,60 +264,64 @@ var as_path_query = function () {
       "potential_dsts": [ { "ip": "10.0.1.202", "port": 5678 } ]
     }
   ]
-}]
-                    </code></pre>
+}]</code></pre>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-3">
-                    <p style="margin-top: 40%;">Response: </p>
+                    <p>The resonse show the resource state abstraction in linear constraints format.</p>
                   </div>
                   <div class="col-4">
+                    <p>Response: </p>
                     <pre><code class="json" id="rsa-result"></code></pre>
                   </div>
                   <div class="col-5">
+                    <p>Human-Readable Response:</p>
                     <pre><code class="json" id="rsa-result-human-readable" style="margin-top: 40%"></code></pre>
                   </div>
                 </div>
 
-                <hr/>
-                <br/>
+                <hr/><br/>
                 <h1>Calculating and Reserving Optimal Resources</h1>
-                <hr/>
-                <br/>
+                <hr/><br/>
 
                 <div class="row">
                   <div class="col-3">
-                    <button type="button" class="btn btn-primary" style="margin-top: 10%" onclick="calculate_bandwidth()">
-                      Calculate and Reserve
-                    </button>
-                    <p style="margin-top: 10%;">Response: </p>
+                    <p>Once the client receives the resource state abstraction (ReSA), it can do its own policy to find the optimal resoruce reservation. We take an example how one client uses the ReSA informantion to maximize the total throughput. Click <button type="button" class="btn btn-primary" onclick="calculate_bandwidth()"> Calculate and Reserve</button> to compute the optimal reservation.
+                    </p>
                   </div>
                   <div class="col-4">
+                    <p>Response:</p>
                     <pre><code class="json" id="bandwidth-result"></code></pre>
                   </div>
                   <div class="col-4">
+                    <p>Human-Readable Response:</p>
                     <pre><code class="json" id="bandwidth-result-human-readable"></code></pre>
                   </div>
                 </div>
 
-                <hr/>
-                <br/>
+                <hr/><br/>
                 <h1>Run Task</h1>
-                <hr/>
-                <br/>
+                <hr/><br/>
 
                 <div class="row">
                   <div class="col-3">
-                    <button type="button" class="btn btn-primary" style="margin-top: 10%" onclick="run_task()">
-                      Run task
-                    </button>
-                    <button type="button" class="btn btn-danger" style="margin-top: 10%" onclick="stop_task()">
-                      Stop task
-                    </button>
-                    <p style="margin-top: 10%;">Response: </p>
+                    <p>Now you get all you need. Just click
+                    <button type="button" class="btn btn-primary" onclick="run_task()">
+                      Run Task
+                    </button> to start your data transfers.</p>
+                    <p>Of course, you can always stop your running task whenever you want
+                    <button type="button" class="btn btn-danger" onclick="stop_task()">
+                      Stop Task
+                    </button></p>
+                    <p>
+                    <p>To reproduce the demo, you can
+                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">
+                      Clear All
+                    </button> and repeat the instructions in a cleanup environment.</p>
                   </div>
                   <div class="col-9">
+                    <p>Response:</p>
                     <pre><code class="json" id="run-task-result"></code></pre>
                   </div>
                 </div>
@@ -356,14 +353,12 @@ s2 --- sw2     sw7     sw4 --- d2
 
                 <div class="row">
                   <div class="col-3">
-                    <div class="container">
-                      <button type="button" class="btn btn-primary" style="margin-top: 30%" onclick="reserve_request()">Reserve Request
-                      </button>
-
-                      <p style="margin-top: 20%;">JSON object summitted to orchestrator: </p>
-                    </div>
+                    <p>In this case, we assume there is no pre-installed route. The client can send a
+                    <button type="button" class="btn btn-primary" onclick="reserve_request()">Resource Request
+                    </button> to setup the route on demand.</p>
                   </div>
                   <div class="col-9">
+                    <p>JSON object summitted to orchestrator:</p>
                     <pre><code class="json" id="reserve_request_json">
 [{
   "id": 1,
@@ -588,7 +583,7 @@ s2 --- sw2     sw7     sw4 --- d2
                   </div>
 
                   <div class="col-4">
-                    <p>Human Readable Response:</p>
+                    <p>Human-Readable Response:</p>
                     <pre><code class="json" id="md-bandwidth-result-human-readable"></code></pre>
                   </div>
                 </div><!-- Response Row End -->
@@ -612,7 +607,7 @@ s2 --- sw2     sw7     sw4 --- d2
                   </div>
 
                   <div class="col-4">
-                    <p>Human Readable Response:</p>
+                    <p>Human-Readable Response:</p>
                     <pre><code class="json" id="md-task-result-human-readable"></code></pre>
                   </div>
                 </div><!-- Response Row End -->
