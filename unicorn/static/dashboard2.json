@@ -53,7 +53,7 @@
 					"settings": {
 						"title": "d1 sending rate",
 						"size": "regular",
-						"value": "(datasources[\"System Dashboard Flask\"][\"s10-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+						"value": "(datasources[\"System Dashboard Flask\"][\"s12-eth2\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
 						"animate": false,
 						"units": "Mbps"
@@ -111,7 +111,7 @@
 					"settings": {
 						"title": "d2 sending rate",
 						"size": "regular",
-						"value": "(datasources[\"System Dashboard Flask\"][\"s11-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+						"value": "(datasources[\"System Dashboard Flask\"][\"s13-eth3\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
 						"animate": false,
 						"units": "Mbps"

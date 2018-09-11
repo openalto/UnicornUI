@@ -13,4 +13,4 @@ install-local: dependencies-local
 	${PYTHON} setup.py install --user
 
 run:
-	gunicorn -b 0.0.0.0:4567 unicorn:app
+	gunicorn -b 0.0.0.0:4567 -w 4 unicorn:app

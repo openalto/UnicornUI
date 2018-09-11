@@ -224,7 +224,7 @@
   };
 
   var start_md_task_case3 = function () {
-    call_orchestrator("/_run_task", $("#md-bandwidth-result-case3").text(),
+    call_orchestrator("/_run_task_interdomain", $("#md-bandwidth-result-case3").text(),
       "#md-task-result-case3", function (obj) {
         // Do nothing
       });
@@ -1266,13 +1266,14 @@
 
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
-    if (target == "case1" || target == "case2") {
+    if (target == "#case1" || target == "#case2") {
       dashboard_url = "/dashboard#source=/static/dashboard.json"
-    } else if (target == "case3" || target == "case4") {
+    } else if (target == "#case3" || target == "#case4") {
       dashboard_url = "/dashboard#source=/static/dashboard2.json"
     }
     $('#dashboard-show').attr("src", dashboard_url)
-    $('#dashboard-full-screen').attr("src", dashboard_url)
+    $('#dashboard-full-screen').attr("href", dashboard_url)
+    document.getElementById('dashboard-show').contentWindow.location.reload();
   });
 </script>
 </body>
