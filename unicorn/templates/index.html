@@ -360,7 +360,8 @@ var start_md_task_case4 = function () {
                 <div class="jumbotron">
                   <h1>2 SDC Partners, Precomputed Routes</h1>
                   <hr class="my-4">
-                  <iframe src="/static/pdfs/intro-topo-exam.pdf" style="width:100%; height:400px;" frameborder="0"></iframe>
+{#                  <iframe src="/static/pdfs/case-1.pdf" style="width:100%; height:400px;" frameborder="0"></iframe>#}
+                    <embed src="/static/svg/case-1.svg" type="image/svg+xml" style="width: 100%; height: 400px;"/>
                   <p>Summary of Case 1:</p>
                   <p>Assume a scenario of two coalition partners (US Army and UK Army). Suppose that US army sends two large sensing datasets through fixed routes in the network infrastructure of UK Army; one from server 1 to server 2 and another from server 3 to server 4. US Army submits a resource discovery request to UK army by specifying two flows (server 1 to server 2 and server 3 to server 4). Once receiving the request, UK Army examines the fixed routes for both flows, and returns the
                   bandwidth sharing information of two flows to US Army in the form of a set of linear inequalities. Then, US Army uses this set of linear inequalities to determine the optimal and feasible bandwidth allocation to transfer both datasets.</p>
@@ -462,13 +463,14 @@ var start_md_task_case4 = function () {
                 <div class="jumbotron">
                   <h1>2 SDC Partners, On-Demand Routes</h1>
                   <hr class="my-4">
-                  <pre>
-s1 --- sw1     sw6     sw3 --- d1
-          \   /   \   /
-           sw5     sw8
-          /   \   /   \
-s2 --- sw2     sw7     sw4 --- d2
-                  </pre>
+{#                  <pre>#}
+{#s1 --- sw1     sw6     sw3 --- d1#}
+{#          \   /   \   /#}
+{#           sw5     sw8#}
+{#          /   \   /   \#}
+{#s2 --- sw2     sw7     sw4 --- d2#}
+{#                  </pre>#}
+                    <embed src="/static/svg/case-2.svg" type="image/svg+xml" style="width: 100%; height: 400px;"/>
                   <p>Summary of Case 2:</p>
                   <p>Extension of Case 1 with: (1) the routes in UK Army's network infrastructure for both dataset transfers are not fixed, i.e., on-demand routing; and (2) US Army wants each dataset to pass a deep packet inspector (DPI) middlebox before arriving at the destinations while guaranteeing &gt; 20Mbps bandwidth for the transfer from server 1 to server 2.</p>
                 </div>
@@ -610,16 +612,17 @@ s2 --- sw2     sw7     sw4 --- d2
                 <div class="jumbotron">
                   <h1>3 SDC Partners, Precomputed Routes</h1>
                   <hr class="my-4">
-                  <pre>
-+------------------------+   +-------------+   +----------------+
-| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |
-|           \            |   |    /   \    |   |    /  |        |
-|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |
-|           /            |   |    \   /    |   |    \  |        |
-| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |
-+------------------------+   +-------------+   +----------------+
-    US Army Division 1      US Army Division 2      UK Army
-                  </pre>
+{#                  <pre>#}
+{#+------------------------+   +-------------+   +----------------+#}
+{#| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |#}
+{#|           \            |   |    /   \    |   |    /  |        |#}
+{#|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |#}
+{#|           /            |   |    \   /    |   |    \  |        |#}
+{#| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |#}
+{#+------------------------+   +-------------+   +----------------+#}
+{#    US Army Division 1      US Army Division 2      UK Army#}
+{#                  </pre>#}
+                    <embed src="/static/svg/case-3.svg" type="image/svg+xml" style="width: 100%; height: 400px;"/>
                   <p>Summary of Case 3:</p>
                   <p>Extension of Case 1 with: (1) there are three coalition partners, i.e., US Army Division 1, US Army Division 2, and UK Army, and (2) US Army Division 1 wants to transfer both datasets using network infrastructures of all three coalition partners, and the inter-partner route is known to be US Army Division 1 -&gt; US Army Division 2 -&gt; UK Army. In this case, US Army Division 1 needs to collect bandwidth sharing information from US Army Division 2 and UK Army.</p>
                 </div>
@@ -831,16 +834,17 @@ s2 --- sw2     sw7     sw4 --- d2
                 <div class="jumbotron">
                   <h1>3 SDC Partners, On-Demand Routes</h1>
                   <hr class="my-4">
-                  <pre>
-+------------------------+   +-------------+   +----------------+
-| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |
-|           \            |   |    /   \    |   |    /  |        |
-|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |
-|           /            |   |    \   /    |   |    \  |        |
-| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |
-+------------------------+   +-------------+   +----------------+
-    US Army Division 1      US Army Division 2      UK Army
-                  </pre>
+{#                  <pre>#}
+{#+------------------------+   +-------------+   +----------------+#}
+{#| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |#}
+{#|           \            |   |    /   \    |   |    /  |        |#}
+{#|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |#}
+{#|           /            |   |    \   /    |   |    \  |        |#}
+{#| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |#}
+{#+------------------------+   +-------------+   +----------------+#}
+{#    US Army Division 1      US Army Division 2      UK Army#}
+{#                  </pre>#}
+                    <embed src="/static/svg/case-3.svg" type="image/svg+xml" style="width: 100%; height: 400px;"/>
                   <p>Summary of Case 4:</p>
                   <p>Extension of Case 3 with: (1) the inter-partner route is unknown. In this case, US Army Division 1 needs to first collect the inter-partner route information from US Army Division 2 and UK Army. Then US Army Division queries the bandwidth sharing information of US Army Division 2 and UK Army based on the collected inter-partner route information.</p>
                 </div>
