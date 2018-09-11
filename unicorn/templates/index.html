@@ -157,6 +157,7 @@
     $("[id^=reserve-request-result]").text("")
     $("[id^=bandwidth-result]").text("")
     $("[id^=md-bandwidth-result]").text("")
+    $("[id^=as-path-result]").text("")
 
     $("[id^=rsa-site1-query]").hide();
     $("[id^=rsa-site2-query]").hide();
@@ -263,17 +264,17 @@
 
     call_orchestrator("/_resource_query_interdomain", $("#rsa-site1-query-case4").text(),
       "#rsa-site1-result-case4", function (obj) {
-        // TODO: Render the linear constraints
+        render_rsa_result(obj, "rsa-site1-result-human-readable-case4")
       });
 
     call_orchestrator("/_resource_query_interdomain", $("#rsa-site2-query-case4").text(),
       "#rsa-site2-result-case4", function (obj) {
-        // TODO: Render the linear constraints
+        render_rsa_result(obj, "rsa-site2-result-human-readable-case4")
       });
 
     call_orchestrator("/_resource_query_interdomain", $("#rsa-site3-query-case4").text(),
       "#rsa-site3-result-case4", function (obj) {
-        // TODO: Render the linear constraints
+        render_rsa_result(obj, "rsa-site3-result-human-readable-case4")
       });
   };
 
@@ -293,9 +294,9 @@
     merge_data['anes'].push(...rsa_site2_result['anes']);
     merge_data['anes'].push(...rsa_site3_result['anes']);
 
-    call_orchestrator("/_calculate_bandwidth", merge_data,
+    call_orchestrator("/_calculate_bandwidth_interdomain", merge_data,
       "#md-bandwidth-result-case4", function (obj) {
-        // TODO: Render the bandwidth reservation
+        render_bandwidth_result(obj, "md-bandwidth-result-human-readable-case4")
       });
   };
 
@@ -791,7 +792,7 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
         "dst-ip": "10.0.2.201", "dst-port": 2345
       },
@@ -799,9 +800,9 @@
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 4567
       },
       "ingress-point": ""
     }
@@ -812,7 +813,7 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
         "dst-ip": "10.0.2.201", "dst-port": 2345
       },
@@ -820,9 +821,9 @@
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 4567
       },
       "ingress-point": "172.17.1.1"
     }
@@ -833,7 +834,7 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
         "dst-ip": "10.0.2.201", "dst-port": 2345
       },
@@ -841,9 +842,9 @@
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 4567
       },
       "ingress-point": "172.17.2.1"
     }
@@ -1067,7 +1068,7 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
         "dst-ip": "10.0.2.201", "dst-port": 2345
       },
@@ -1075,9 +1076,9 @@
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 5678
       },
       "ingress-point": ""
     }
@@ -1088,7 +1089,7 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
         "dst-ip": "10.0.2.201", "dst-port": 2345
       },
@@ -1096,9 +1097,9 @@
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 4567
       },
       "ingress-point": "172.17.1.1"
     }
@@ -1109,17 +1110,17 @@
   "query-desc": [
     {
       "flow": {
-        "flow-id": 0,
+        "flow-id": 1,
         "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "dst-ip": "10.0.2.201", "dst-port": 2345
       },
       "ingress-point": "172.17.2.1"
     },
     {
       "flow": {
-        "flow-id": 0,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "flow-id": 2,
+        "src-ip": "10.0.1.102", "src-port": 3456,
+        "dst-ip": "10.0.2.202", "dst-port": 4567
       },
       "ingress-point": "172.17.2.1"
     }
