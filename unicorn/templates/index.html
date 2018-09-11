@@ -44,7 +44,7 @@ var call_orchestrator = function (route, input_data, output_div_id, render) {
 }
 
 var submit_task = function () {
-  call_orchestrator("/_submit_task", task.getValue(),
+  call_orchestrator("/_submit_task", $("#submit_task_json").getValue(),
     "#rsa-result", function (obj) {
       s = "Resource constraints are: \n\n"
       for (var i = 0; i < obj["ane-matrix"].length; i += 1){
