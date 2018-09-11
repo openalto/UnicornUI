@@ -106,9 +106,11 @@ def _resource_query_interdomain():
     elif ingress_points.split('.')[2] == '1':
         r = {
             "ane-matrix": [
-                [{"flow-id": 1}, {"flow-id": 2}]
+                [{"flow-id": 1}],
+                [{"flow-id": 2}]
             ],
             "anes": [
+                {"availbw": 40000},
                 {"availbw": 40000}
             ]
         }
