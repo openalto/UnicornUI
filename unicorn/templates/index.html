@@ -163,26 +163,26 @@
     $("[id^=rsa-site3-query]").hide();
   };
 
+  var render_rsa_result = function (obj, label_id) {
+    s = "Resource constraints are: \n\n"
+    for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
+      vector = obj["ane-matrix"][i];
+      limit = obj["anes"][i];
+      flow_name_list = []
+      for (var j = 0; j < vector.length; j += 1) {
+        flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
+      }
+      flow_name_list.sort()
+      s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
+    }
+    $(`#${label_id}`).text(s)
+  }
+
   var submit_md_task_case3 = function () {
     // Submit multi-domain data transfer task
     $("#rsa-site1-query-case3").show();
     $("#rsa-site2-query-case3").show();
     $("#rsa-site3-query-case3").show();
-
-    var render_rsa_result = function (obj, label_id) {
-      s = "Resource constraints are: \n\n"
-      for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
-        vector = obj["ane-matrix"][i];
-        limit = obj["anes"][i];
-        flow_name_list = []
-        for (var j = 0; j < vector.length; j += 1) {
-          flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
-        }
-        flow_name_list.sort()
-        s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
-      }
-      $(`#${label_id}`).text(s)
-    }
 
     call_orchestrator("/_resource_query_interdomain", $("#rsa-site1-query-case3").text(),
       "#rsa-site1-result-case3", function (obj) {
@@ -1069,7 +1069,7 @@
       "flow": {
         "flow-id": 0,
         "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "dst-ip": "10.0.2.201", "dst-port": 2345
       },
       "ingress-point": ""
     },
@@ -1077,7 +1077,7 @@
       "flow": {
         "flow-id": 0,
         "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "dst-ip": "10.0.2.201", "dst-port": 2345
       },
       "ingress-point": ""
     }
@@ -1090,7 +1090,7 @@
       "flow": {
         "flow-id": 0,
         "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "dst-ip": "10.0.2.201", "dst-port": 2345
       },
       "ingress-point": "172.17.1.1"
     },
@@ -1098,7 +1098,7 @@
       "flow": {
         "flow-id": 0,
         "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345,
+        "dst-ip": "10.0.2.201", "dst-port": 2345
       },
       "ingress-point": "172.17.1.1"
     }
