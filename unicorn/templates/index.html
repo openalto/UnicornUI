@@ -395,13 +395,13 @@
                     <div class="row">
                         <div class="col-3">
                             <p>We demonstrate how SFP and Mercator project work with the inter-domain task. Firstly,
-                                the orchestrator need to know the member-network-path of submitted flows. SFP is the new
+                                the orchestrator need to know the member-network-path of submitted circuits. SFP is the new
                                 inter-domain
                                 routing protocol for SDN, which could help the orchestrator to find the member-network-path of
-                                submitted flows.</p>
+                                submitted circuits.</p>
                             <p>
                                 <button type="button" class="btn btn-primary" onclick="do_path_query()">
-                                    Do Path Query
+                                    Multi-domain Path Discovery by SFP
                                 </button>
                             </p>
                             <p>
@@ -431,7 +431,7 @@
 
                     <div class="row">
                         <div class="col-3">
-                            <p>SFP could get the member-network-path of given flows.</p>
+                            <p>SFP could get the member-network-path of given circuits.</p>
                         </div>
                         <div class="col-4">
                             <p>Result of Path Query</p>
@@ -447,12 +447,12 @@
                         <div class="col-3">
                             <p>
                                 After getting the member-network-path, the orchestrator could ask each network for the
-                                resource limits of submitted flows. The orchestrator would send queries to different
+                                resource limits of submitted circuits. The orchestrator would send queries to different
                                 domains concurrently.
                             </p>
                             <p>
                                 <button type="button" class="btn btn-primary" onclick="submit_md_task_case3()">
-                                    Submit this Task to Try Out!
+                                    Multi-domain Resource Discovery by Mercator
                                 </button>
                             </p>
 
