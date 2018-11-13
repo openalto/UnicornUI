@@ -33,8 +33,11 @@ def _submit_task():
 
 @app.route("/_calculate_bandwidth")
 def _calculate_bandwidth():
+    print(request.args.get('text'))
     req_str = request.args.get('text')
+    print(req_str)
     r = requests.post(app.config["CALCULATE_BANDWIDTH_URL"], data=req_str, headers={'content-type': 'application/json'})
+    print(r.text)
     return jsonify(result=r.text)
 
 
@@ -61,10 +64,12 @@ def _run_task():
     r = requests.post(app.config["RUN_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
     return jsonify(result=r.text)
 
+
 @app.route("/_run_task_interdomain")
 def _run_task_interdomain():
     req_str = request.args.get('text')
-    r = requests.post(app.config["RUN_TASK_INTERDOMAIN_URL"], data=req_str, headers={'content-type': 'application/json'})
+    r = requests.post(app.config["RUN_TASK_INTERDOMAIN_URL"], data=req_str,
+                      headers={'content-type': 'application/json'})
     return jsonify(result=r.text)
 
 
@@ -88,43 +93,18 @@ def _resource_query():
     return jsonify(result=r.text)
 
 
+@app.route("/_path_query")
+def _path_query():
+    req_str = request.args.get('text')
+    r = requests.post(app.config["PATH_QUERY_URL"], data=req_str, headers={'content-type': 'application/json'})
+    return jsonify(result=r.text)
+
+
 @app.route("/_resource_query_interdomain")
 def _resource_query_interdomain():
     req_str = request.args.get('text')
-    data = json.loads(req_str)
-    ingress_points = data["query-desc"][0]["ingress-point"]
-    if ingress_points == "":
-        r = {
-            "ane-matrix": [
-                [{"flow-id": 1}, {"flow-id": 2}]
-            ],
-            "anes": [
-                {"availbw": 100000}
-            ]
-        }
-        return jsonify(result=json.dumps(r))
-    elif ingress_points.split('.')[2] == '1':
-        r = {
-            "ane-matrix": [
-                [{"flow-id": 1}],
-                [{"flow-id": 2}]
-            ],
-            "anes": [
-                {"availbw": 40000},
-                {"availbw": 40000}
-            ]
-        }
-        return jsonify(result=json.dumps(r))
-    else:
-        r = {
-            "ane-matrix": [
-                [{"flow-id": 1}, {"flow-id": 2}]
-            ],
-            "anes": [
-                {"availbw": 100000}
-            ]
-        }
-        return jsonify(result=json.dumps(r))
+    r = requests.post(app.config["SUBMIT_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
+    return jsonify(result=r.text)
 
 
 @app.route("/_network_data")

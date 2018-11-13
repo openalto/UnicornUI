@@ -11,10 +11,10 @@
 
     <link rel="stylesheet" href="/static/code-styles/tomorrow.css">
 
-    <title>Resource Discovery and Orchestration for Software Defined Coalitions (AFM 2018)</title>
+    <title>Resource Discovery and Orchestration for Software Defined Coalitions (Supercomputing 2018)</title>
 
     <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
+        $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
     </script>
 </head>
 <body>
@@ -33,284 +33,295 @@
 <script>hljs.initHighlightingOnLoad();</script>
 
 <script>
-  var call_orchestrator = function (route, input_data, output_div_id, render) {
-    $.getJSON($SCRIPT_ROOT + route, {
-      text: input_data
-    }, function (data) {
-      obj = JSON.parse(data.result)
-      $(output_div_id).text(JSON.stringify(JSON.parse(data.result), null, 2))
-      render(obj);
-    })
-  }
+    var call_orchestrator = function (route, input_data, output_div_id, render) {
+        $.getJSON($SCRIPT_ROOT + route, {
+            text: input_data
+        }, function (data) {
+            obj = JSON.parse(data.result)
+            $(output_div_id).text(JSON.stringify(JSON.parse(data.result), null, 2))
+            render(obj);
+        })
+    }
 
-  var submit_task_case1 = function () {
-    call_orchestrator("/_submit_task", $("#submit_task_json_case1").text(),
-      "#rsa-result-case1", function (obj) {
-        s = "Resource constraints are: \n\n"
-        for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
-          vector = obj["ane-matrix"][i];
-          limit = obj["anes"][i];
-          flow_name_list = []
-          for (var j = 0; j < vector.length; j += 1) {
-            flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
-          }
-          flow_name_list.sort()
-          s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
-        }
-        $("#rsa-result-human-readable-case1").text(s)
-      });
-  };
+    var submit_task_case1 = function () {
+        call_orchestrator("/_submit_task", $("#submit_task_json_case1").text(),
+            "#rsa-result-case1", function (obj) {
+                s = "Resource constraints are: \n\n"
+                for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
+                    vector = obj["ane-matrix"][i];
+                    limit = obj["anes"][i];
+                    flow_name_list = []
+                    for (var j = 0; j < vector.length; j += 1) {
+                        flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
+                    }
+                    flow_name_list.sort()
+                    s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
+                }
+                $("#rsa-result-human-readable-case1").text(s)
+            });
+    };
 
-  var calculate_bandwidth_case1 = function () {
-    call_orchestrator("/_calculate_bandwidth", $("#rsa-result-case1").text(),
-      "#bandwidth-result-case1", function (obj) {
+    var calculate_bandwidth_case1 = function () {
+        call_orchestrator("/_calculate_bandwidth", $("#rsa-result-case1").text(),
+            "#bandwidth-result-case1", function (obj) {
+                obj = obj["flows"]
+                s = "Optimal reservation: \n\n"
+                for (var i = 0; i < obj.length; i += 1) {
+                    flow_name = "flow " + obj[i]["flow-id"]
+                    bw = obj[i]["bandwidth"]
+                    s += `    ${flow_name}: ${bw} Kbps\n`
+                }
+                $("#bandwidth-result-human-readable-case1").text(s)
+                setTimeout(function () {
+                    s = $("#bandwidth-result-human-readable-case1").text()
+                    s += "\nReserve successfully\n"
+                    $("#bandwidth-result-human-readable-case1").text(s)
+                }, 1500)
+            });
+    };
+
+    var run_task_case1 = function () {
+        call_orchestrator("/_run_task", $("#bandwidth-result-case1").text(),
+            "#run-task-result-case1", function (obj) {
+                // Do nothing
+            });
+    };
+
+    var reserve_request = function () {
+        call_orchestrator("/_on_demand_pce", $("#reserve_request_json").text(),
+            "#reserve-request-result", function (obj) {
+                // Do nothing
+            });
+    };
+
+    var submit_task_case2 = function () {
+        call_orchestrator("/_submit_task", $("#submit_task_json_case2").text(),
+            "#rsa-result-case2", function (obj) {
+                s = "Resource constraints are: \n\n"
+                for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
+                    vector = obj["ane-matrix"][i];
+                    limit = obj["anes"][i];
+                    flow_name_list = []
+                    for (var j = 0; j < vector.length; j += 1) {
+                        flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
+                    }
+                    flow_name_list.sort()
+                    s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
+                }
+                $("#rsa-result-human-readable-case2").text(s)
+            });
+    };
+
+    var render_bandwidth_result = function (obj, target_id) {
         obj = obj["flows"]
         s = "Optimal reservation: \n\n"
         for (var i = 0; i < obj.length; i += 1) {
-          flow_name = "flow " + obj[i]["flow-id"]
-          bw = obj[i]["bandwidth"]
-          s += `    ${flow_name}: ${bw} Kbps\n`
+            flow_name = "flow " + obj[i]["flow-id"]
+            bw = obj[i]["bandwidth"]
+            s += `    ${flow_name}: ${bw} Kbps\n`
         }
-        $("#bandwidth-result-human-readable-case1").text(s)
+        $(`#${target_id}`).text(s)
         setTimeout(function () {
-          s = $("#bandwidth-result-human-readable-case1").text()
-          s += "\nReserve successfully\n"
-          $("#bandwidth-result-human-readable-case1").text(s)
+            s = $(`#${target_id}`).text()
+            s += "\nReserve successfully\n"
+            $(`#${target_id}`).text(s)
         }, 1500)
-      });
-  };
+    }
 
-  var run_task_case1 = function () {
-    call_orchestrator("/_run_task", $("#bandwidth-result-case1").text(),
-      "#run-task-result-case1", function (obj) {
-        // Do nothing
-      });
-  };
+    var calculate_bandwidth_case2 = function () {
+        call_orchestrator("/_calculate_bandwidth", $("#rsa-result-case2").text(),
+            "#bandwidth-result-case2", function (obj) {
+                render_bandwidth_result(obj, "bandwidth-result-human-readable-case2")
+            })
+    }
 
-  var reserve_request = function () {
-    call_orchestrator("/_on_demand_pce", $("#reserve_request_json").text(),
-      "#reserve-request-result", function (obj) {
-        // Do nothing
-      });
-  };
+    var run_task_case2 = function () {
+        call_orchestrator("/_run_task", $("#bandwidth-result-case2").text(),
+            "#run-task-result-case2", function (obj) {
+                // Do nothing
+            });
+    };
 
-  var submit_task_case2 = function () {
-    call_orchestrator("/_submit_task", $("#submit_task_json_case2").text(),
-      "#rsa-result-case2", function (obj) {
+    var stop_task = function () {
+        $.getJSON($SCRIPT_ROOT + "/_stop_task", {}, function (data) {
+        })
+    };
+
+    var clear_texts = function () {
+        $("[id^=path-query-result]").text("")
+        $("[id^=rsa-result]").text("")
+        $("[id^=rsa-site1-result]").text("")
+        $("[id^=rsa-site2-result]").text("")
+        $("[id^=rsa-site3-result]").text("")
+        $("[id^=run-task-result]").text("")
+        $("[id^=md-task-result]").text("")
+        $("[id^=reserve-request-result]").text("")
+        $("[id^=bandwidth-result]").text("")
+        $("[id^=md-bandwidth-result]").text("")
+        $("[id^=as-path-result]").text("")
+
+        $("[id^=rsa-site1-query]").hide();
+        $("[id^=rsa-site2-query]").hide();
+        $("[id^=rsa-site3-query]").hide();
+    };
+
+    var render_rsa_result = function (obj, label_id) {
         s = "Resource constraints are: \n\n"
         for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
-          vector = obj["ane-matrix"][i];
-          limit = obj["anes"][i];
-          flow_name_list = []
-          for (var j = 0; j < vector.length; j += 1) {
-            flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
-          }
-          flow_name_list.sort()
-          s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
+            vector = obj["ane-matrix"][i];
+            limit = obj["anes"][i];
+            flow_name_list = []
+            for (var j = 0; j < vector.length; j += 1) {
+                flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
+            }
+            flow_name_list.sort()
+            s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
         }
-        $("#rsa-result-human-readable-case2").text(s)
-      });
-  };
+        $(`#${label_id}`).text(s)
+    };
 
-  var render_bandwidth_result = function (obj, target_id) {
-    obj = obj["flows"]
-    s = "Optimal reservation: \n\n"
-    for (var i = 0; i < obj.length; i += 1) {
-      flow_name = "flow " + obj[i]["flow-id"]
-      bw = obj[i]["bandwidth"]
-      s += `    ${flow_name}: ${bw} Kbps\n`
-    }
-    $(`#${target_id}`).text(s)
-    setTimeout(function () {
-      s = $(`#${target_id}`).text()
-      s += "\nReserve successfully\n"
-      $(`#${target_id}`).text(s)
-    }, 1500)
-  }
+    var render_path_query_result = function (obj, label_id) {
+        s = "Path query results are: \n\n";
+        for (var i = 0; i < obj["flow-paths"].length; i += 1) {
+            s += `Flow ${i+1}: `;
+            flow_path = obj["flow-paths"][i];
+            for (var j = 0; j < flow_path.length; j++) {
+                hop = flow_path[j];
+                domain_name = obj["path-property"][hop]["domain-id"];
+                s += " " + domain_name;
+            }
+            s += "\n"
+        }
+        $(`#${label_id}`).text(s);
+    };
 
-  var calculate_bandwidth_case2 = function () {
-    call_orchestrator("/_calculate_bandwidth", $("#rsa-result-case2").text(),
-      "#bandwidth-result-case2", function (obj) {
-        render_bandwidth_result(obj, "bandwidth-result-human-readable-case2")
-      })
-  }
+    var submit_md_task_case3 = function () {
+        // Submit multi-domain data transfer task
 
-  var run_task_case2 = function () {
-    call_orchestrator("/_run_task", $("#bandwidth-result-case2").text(),
-      "#run-task-result-case2", function (obj) {
-        // Do nothing
-      });
-  };
+        call_orchestrator("/_resource_query_interdomain", $("#submit_md_task_json").text(),
+            "#rsa-result", function (obj) {
+                render_rsa_result(obj["Domain-1"], "rsa-site1-result-human-readable-case3")
+                render_rsa_result(obj["Domain-2"], "rsa-site2-result-human-readable-case3")
+                render_rsa_result(obj["Domain-3"], "rsa-site3-result-human-readable-case3")
+            });
+    };
 
-  var stop_task = function () {
-    $.getJSON($SCRIPT_ROOT + "/_stop_task", {}, function (data) {
-    })
-  };
+    var do_path_query = function () {
+        call_orchestrator("/_path_query", $("#path-query-body").text(),
+            "#path-query-result", function (obj) {
+                render_path_query_result(obj, "path-query-result-human-readable")
+            }
+        )
+    };
 
-  var clear_texts = function () {
-    $("[id^=rsa-result]").text("")
-    $("[id^=rsa-site1-result]").text("")
-    $("[id^=rsa-site2-result]").text("")
-    $("[id^=rsa-site3-result]").text("")
-    $("[id^=run-task-result]").text("")
-    $("[id^=md-task-result]").text("")
-    $("[id^=reserve-request-result]").text("")
-    $("[id^=bandwidth-result]").text("")
-    $("[id^=md-bandwidth-result]").text("")
-    $("[id^=as-path-result]").text("")
+    var calculate_md_bandwidth_case3 = function () {
+        // Calculate bw reservation for inter-domain
+        var merge_data = {'ane-matrix': [], 'anes': []};
 
-    $("[id^=rsa-site1-query]").hide();
-    $("[id^=rsa-site2-query]").hide();
-    $("[id^=rsa-site3-query]").hide();
-  };
+        rsa_result = JSON.parse($('#rsa-result').text());
 
-  var render_rsa_result = function (obj, label_id) {
-    s = "Resource constraints are: \n\n"
-    for (var i = 0; i < obj["ane-matrix"].length; i += 1) {
-      vector = obj["ane-matrix"][i];
-      limit = obj["anes"][i];
-      flow_name_list = []
-      for (var j = 0; j < vector.length; j += 1) {
-        flow_name_list.push("flow " + obj["ane-matrix"][i][j]["flow-id"])
-      }
-      flow_name_list.sort()
-      s += '    ' + flow_name_list.join(" + ") + ` <= ${limit["availbw"]} Kbps\n`
-    }
-    $(`#${label_id}`).text(s)
-  }
+        merge_data['ane-matrix'].push(...rsa_result['Domain-1']['ane-matrix']);
+        merge_data['ane-matrix'].push(...rsa_result['Domain-2']['ane-matrix']);
+        merge_data['ane-matrix'].push(...rsa_result['Domain-3']['ane-matrix']);
 
-  var submit_md_task_case3 = function () {
-    // Submit multi-domain data transfer task
-    $("#rsa-site1-query-case3").show();
-    $("#rsa-site2-query-case3").show();
-    $("#rsa-site3-query-case3").show();
+        merge_data['anes'].push(...rsa_result['Domain-1']['anes']);
+        merge_data['anes'].push(...rsa_result['Domain-2']['anes']);
+        merge_data['anes'].push(...rsa_result['Domain-3']['anes']);
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site1-query-case3").text(),
-      "#rsa-site1-result-case3", function (obj) {
-        render_rsa_result(obj, "rsa-site1-result-human-readable-case3")
-      });
+        call_orchestrator("/_calculate_bandwidth", JSON.stringify(merge_data),
+            "#md-bandwidth-result-case3", function (obj) {
+                // TODO: Render the bandwidth reservation
+                render_bandwidth_result(obj, "md-bandwidth-result-human-readable-case3")
+            });
+    };
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site2-query-case3").text(),
-      "#rsa-site2-result-case3", function (obj) {
-        render_rsa_result(obj, "rsa-site2-result-human-readable-case3")
-      });
+    var start_md_task_case3 = function () {
+        call_orchestrator("/_run_task_interdomain", $("#md-bandwidth-result-case3").text(),
+            "#md-task-result-case3", function (obj) {
+                // Do nothing
+            });
+    };
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site3-query-case3").text(),
-      "#rsa-site3-result-case3", function (obj) {
-        render_rsa_result(obj, "rsa-site3-result-human-readable-case3")
-      });
-  };
-
-  var calculate_md_bandwidth_case3 = function () {
-    // Calculate bw reservation for inter-domain
-    var merge_data = {'ane-matrix': [], 'anes': []};
-
-    rsa_site1_result = JSON.parse($('#rsa-site1-result-case3').text());
-    rsa_site2_result = JSON.parse($('#rsa-site2-result-case3').text());
-    rsa_site3_result = JSON.parse($('#rsa-site3-result-case3').text());
-
-    merge_data['ane-matrix'].push(...rsa_site1_result['ane-matrix']);
-    merge_data['ane-matrix'].push(...rsa_site2_result['ane-matrix']);
-    merge_data['ane-matrix'].push(...rsa_site3_result['ane-matrix']);
-
-    merge_data['anes'].push(...rsa_site1_result['anes']);
-    merge_data['anes'].push(...rsa_site2_result['anes']);
-    merge_data['anes'].push(...rsa_site3_result['anes']);
-
-    call_orchestrator("/_calculate_bandwidth_interdomain", merge_data,
-      "#md-bandwidth-result-case3", function (obj) {
-        // TODO: Render the bandwidth reservation
-        render_bandwidth_result(obj, "md-bandwidth-result-human-readable-case3")
-      });
-  };
-
-  var start_md_task_case3 = function () {
-    call_orchestrator("/_run_task_interdomain", $("#md-bandwidth-result-case3").text(),
-      "#md-task-result-case3", function (obj) {
-        // Do nothing
-      });
-  };
-
-  var as_path_result1 = `{
+    var as_path_result1 = `{
   "next-ingress-point": [ "172.17.1.1", "172.17.1.1" ]
 }`;
 
-  var as_path_result2 = `{
+    var as_path_result2 = `{
   "next-ingress-point": [ "172.17.2.1", "172.17.2.1" ]
 }`;
 
-  var as_path_result3 = `{
+    var as_path_result3 = `{
   "next-ingress-point": [ "", "" ]
 }`;
 
-  var as_path_query = function () {
-    // Demo query as-level path for the given set of flows
-    setTimeout(function () {
-      $("#as-path-result1").text(as_path_result1);
-      setTimeout(function () {
-        $("#as-path-result2").text(as_path_result2);
+    var as_path_query = function () {
+        // Demo query as-level path for the given set of flows
         setTimeout(function () {
-          $("#as-path-result3").text(as_path_result3);
+            $("#as-path-result1").text(as_path_result1);
+            setTimeout(function () {
+                $("#as-path-result2").text(as_path_result2);
+                setTimeout(function () {
+                    $("#as-path-result3").text(as_path_result3);
+                }, Math.random() * 300 + 200);
+            }, Math.random() * 300 + 200);
         }, Math.random() * 300 + 200);
-      }, Math.random() * 300 + 200);
-    }, Math.random() * 300 + 200);
-  };
+    };
 
-  var submit_md_task_case4 = function () {
-    // Submit multi-domain data transfer task
-    $("#rsa-site1-query-case4").show();
-    $("#rsa-site2-query-case4").show();
-    $("#rsa-site3-query-case4").show();
+    var submit_md_task_case4 = function () {
+        // Submit multi-domain data transfer task
+        $("#rsa-site1-query-case4").show();
+        $("#rsa-site2-query-case4").show();
+        $("#rsa-site3-query-case4").show();
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site1-query-case4").text(),
-      "#rsa-site1-result-case4", function (obj) {
-        render_rsa_result(obj, "rsa-site1-result-human-readable-case4")
-      });
+        call_orchestrator("/_resource_query_interdomain", $("#rsa-site1-query-case4").text(),
+            "#rsa-site1-result-case4", function (obj) {
+                render_rsa_result(obj, "rsa-site1-result-human-readable-case4")
+            });
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site2-query-case4").text(),
-      "#rsa-site2-result-case4", function (obj) {
-        render_rsa_result(obj, "rsa-site2-result-human-readable-case4")
-      });
+        call_orchestrator("/_resource_query_interdomain", $("#rsa-site2-query-case4").text(),
+            "#rsa-site2-result-case4", function (obj) {
+                render_rsa_result(obj, "rsa-site2-result-human-readable-case4")
+            });
 
-    call_orchestrator("/_resource_query_interdomain", $("#rsa-site3-query-case4").text(),
-      "#rsa-site3-result-case4", function (obj) {
-        render_rsa_result(obj, "rsa-site3-result-human-readable-case4")
-      });
-  };
+        call_orchestrator("/_resource_query_interdomain", $("#rsa-site3-query-case4").text(),
+            "#rsa-site3-result-case4", function (obj) {
+                render_rsa_result(obj, "rsa-site3-result-human-readable-case4")
+            });
+    };
 
-  var calculate_md_bandwidth_case4 = function () {
-    // Calculate bw reservation for inter-domain
-    var merge_data = {'ane-matrix': [], 'anes': []};
+    var calculate_md_bandwidth_case4 = function () {
+        // Calculate bw reservation for inter-domain
+        var merge_data = {'ane-matrix': [], 'anes': []};
 
-    rsa_site1_result = JSON.parse($('#rsa-site1-result-case4').text());
-    rsa_site2_result = JSON.parse($('#rsa-site2-result-case4').text());
-    rsa_site3_result = JSON.parse($('#rsa-site3-result-case4').text());
+        rsa_site1_result = JSON.parse($('#rsa-site1-result-case4').text());
+        rsa_site2_result = JSON.parse($('#rsa-site2-result-case4').text());
+        rsa_site3_result = JSON.parse($('#rsa-site3-result-case4').text());
 
-    merge_data['ane-matrix'].push(...rsa_site1_result['ane-matrix']);
-    merge_data['ane-matrix'].push(...rsa_site2_result['ane-matrix']);
-    merge_data['ane-matrix'].push(...rsa_site3_result['ane-matrix']);
+        merge_data['ane-matrix'].push(...rsa_site1_result['ane-matrix']);
+        merge_data['ane-matrix'].push(...rsa_site2_result['ane-matrix']);
+        merge_data['ane-matrix'].push(...rsa_site3_result['ane-matrix']);
 
-    merge_data['anes'].push(...rsa_site1_result['anes']);
-    merge_data['anes'].push(...rsa_site2_result['anes']);
-    merge_data['anes'].push(...rsa_site3_result['anes']);
+        merge_data['anes'].push(...rsa_site1_result['anes']);
+        merge_data['anes'].push(...rsa_site2_result['anes']);
+        merge_data['anes'].push(...rsa_site3_result['anes']);
 
-    call_orchestrator("/_calculate_bandwidth_interdomain", merge_data,
-      "#md-bandwidth-result-case4", function (obj) {
-        render_bandwidth_result(obj, "md-bandwidth-result-human-readable-case4")
-      });
-  };
+        call_orchestrator("/_calculate_bandwidth_interdomain", merge_data,
+            "#md-bandwidth-result-case4", function (obj) {
+                render_bandwidth_result(obj, "md-bandwidth-result-human-readable-case4")
+            });
+    };
 
-  var start_md_task_case4 = function () {
-    call_orchestrator("/_run_task_interdomain", $("#md-bandwidth-result-case4").text(),
-      "#md-task-result-case4", function (obj) {
-        // Do nothing
-      });
-  };
+    var start_md_task_case4 = function () {
+        call_orchestrator("/_run_task_interdomain", $("#md-bandwidth-result-case4").text(),
+            "#md-task-result-case4", function (obj) {
+                // Do nothing
+            });
+    };
 </script>
 
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">AFM 2018</a>
+        <a class="navbar-brand" href="#">Supercomputing 2018</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -328,7 +339,7 @@
     </nav>
 
     <div class="jumbotron">
-        <h1>Resource Discovery and Orchestration for Software Defined Coalitions (AFM 2018)</h1>
+        <h1>Resource Discovery and Orchestration for Software Defined Coalitions (Supercomputing 2018)</h1>
         <hr class="my-4">
         <p>List of publications/submissions:</p>
         <p>
@@ -367,631 +378,90 @@
 
     <div class="row">
         <div class="col-12">
-            <ul class="nav nav-tabs" id="demo-cases" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="case1-tab" data-toggle="tab" href="#case1" role="tab"
-                       aria-controls="case1" aria-selected="true">Case 1</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="case2-tab" data-toggle="tab" href="#case2" role="tab" aria-controls="case2"
-                       aria-selected="false">Case 2</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="case3-tab" data-toggle="tab" href="#case3" role="tab" aria-controls="case3"
-                       aria-selected="false">Case 3</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="case4-tab" data-toggle="tab" href="#case4" role="tab" aria-controls="case4"
-                       aria-selected="false">Case 4</a>
-                </li>
-            </ul>
-
 
             <div class="tab-content" id="show-cases">
-                <!-- Show Case 1 -->
-                <div class="tab-pane fade show active" id="case1" role="tabpanel" aria-labelledby="case1-tab">
-                    <div class="container">
-                        <!-- Original Case 1 View -->
-                        <div class="jumbotron">
-                            <h1>2 SDC Partners, Precomputed Routes</h1>
-                            <hr class="my-4">
-                            {#                  <iframe src="/static/pdfs/case-1.pdf" style="width:100%; height:400px;" frameborder="0"></iframe>#}
-                            <embed src="/static/svg/case-1.svg" type="image/svg+xml"
-                                   style="width: 100%; height: 400px; align-content: center"/>
-                            <p>Summary of Case 1:</p>
-                            <p>Assume a scenario of two coalition partners (US Army and UK Army). Suppose that US army
-                                sends two large sensing datasets through fixed routes in the network infrastructure of
-                                UK Army; one from server 1 to server 2 and another from server 3 to server 4. US Army
-                                submits a resource discovery request to UK army by specifying two flows (server 1 to
-                                server 2 and server 3 to server 4). Once receiving the request, UK Army examines the
-                                fixed routes for both flows, and returns the
-                                bandwidth sharing information of two flows to US Army in the form of a set of linear
-                                inequalities. Then, US Army uses this set of linear inequalities to determine the
-                                optimal and feasible bandwidth allocation to transfer both datasets.</p>
-                        </div>
-
-                        <h1>Start</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The first case is very simple. All the routes are fixed and have been deployed. You
-                                    only need to
-                                    <button type="button" class="btn btn-primary" onclick="submit_task_case1()">Submit a
-                                        Task
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator:</p>
-                                <pre><code class="json" id="submit_task_json_case1">[{
-  "id": 1,
-  "jobs": [
-    {
-      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
-    },
-    {
-      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.1.202", "port": 5678 } ]
-    }
-  ]
-}]</code></pre>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The resonse show the resource state abstraction in linear constraints format.</p>
-                            </div>
-                            <div class="col-4">
-                                <p>Response: </p>
-                                <pre><code class="json" id="rsa-result-case1"></code></pre>
-                            </div>
-                            <div class="col-5">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="rsa-result-human-readable-case1"
-                                           style="margin-top: 40%"></code></pre>
-                            </div>
-                        </div>
-
-                        <hr/>
-                        <br/>
-                        <h1>Calculating and Reserving Optimal Resources</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Once the client receives the resource state abstraction (ReSA), it can do its own
-                                    policy to find the optimal resoruce reservation. We take an example how one client
-                                    uses the ReSA informantion to maximize the total throughput. Click
-                                    <button type="button" class="btn btn-primary" onclick="calculate_bandwidth_case1()">
-                                        Calculate and Reserve
-                                    </button>
-                                    to compute the optimal reservation.
-                                </p>
-                            </div>
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="bandwidth-result-case1"></code></pre>
-                            </div>
-                            <div class="col-4">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="bandwidth-result-human-readable-case1"></code></pre>
-                            </div>
-                        </div>
-
-                        <hr/>
-                        <br/>
-                        <h1>Run Task</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Now you get all you need. Just click
-                                    <button type="button" class="btn btn-primary" onclick="run_task_case1()">
-                                        Run Task
-                                    </button>
-                                    to start your data transfers.
-                                </p>
-                                <p>Of course, you can always stop your running task whenever you want
-                                    <button type="button" class="btn btn-danger" onclick="stop_task()">
-                                        Stop Task
-                                    </button>
-                                </p>
-                                <p>
-                                <p>To reproduce the demo, you can
-                                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">
-                                        Clear All
-                                    </button>
-                                    and repeat the instructions in a cleanup environment.
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>Response:</p>
-                                <pre><code class="json" id="run-task-result-case1"></code></pre>
-                            </div>
-                        </div>
-
+                <div class="container">
+                    <div class="jumbotron">
+                        <h1>3 networks, Computing source and reserve resources</h1>
+                        <hr class="my-4">
+                        <embed class="bg-white" src="/static/svg/mercator-sc18.svg" type="image/svg+xml"
+                               style="width: 100%; height: 400px;"/>
+                        <p>Summary of this demo</p>
+                        <p>We have 3 networks, whose topology is presented above. Now we have 2 data transmission tasks
+                            submitted,
+                            which are </p>
+                        <p>1) DTN 1 -> DTN 3.</p>
+                        <p>2) DTN 2 -> DTN 4.</p>
+                        <p>The orchestrator would handle these tasks.</p>
                     </div>
-                </div>
-                <!-- End of Case 1 -->
-
-                <!-- Show Case 2 -->
-                <div class="tab-pane fade" id="case2" role="tabpanel" aria-labelledby="case2-tab">
-                    <div class="container">
-                        <div class="jumbotron">
-                            <h1>2 SDC Partners, On-Demand Routes</h1>
-                            <hr class="my-4">
-                            {#                  <pre>#}
-                            {#s1 --- sw1     sw6     sw3 --- d1#}
-                            {#          \   /   \   /#}
-                            {#           sw5     sw8#}
-                            {#          /   \   /   \#}
-                            {#s2 --- sw2     sw7     sw4 --- d2#}
-                            {#                  </pre>#}
-                            <embed src="/static/svg/case-2.svg" type="image/svg+xml"
-                                   style="width: 100%; height: 400px;"/>
-                            <p>Summary of Case 2:</p>
-                            <p>Extension of Case 1 with: (1) the routes in UK Army's network infrastructure for both
-                                dataset transfers are not fixed, i.e., on-demand routing; and (2) US Army wants each
-                                dataset to pass a deep packet inspector (DPI) middlebox before arriving at the
-                                destinations while guaranteeing &gt; 20Mbps bandwidth for the transfer from server 1 to
-                                server 2.</p>
+                    <div class="row">
+                        <div class="col-3">
+                            <p>We demonstrate how SFP and Mercator project work with the inter-domain task. Firstly,
+                                the orchestrator need to know the AS path of submitted flows. SFP is the new
+                                inter-domain
+                                routing protocol for SDN, which could help the orchestrator to find the AS path of
+                                submitted flows.</p>
+                            <p>
+                                <button type="button" class="btn btn-primary" onclick="do_path_query()">
+                                    Do Path Query
+                                </button>
+                            </p>
+                            <p>
+                                <button type="button" class="btn btn-secondary" onclick="clear_texts()">Clear All
+                                </button>
+                            </p>
                         </div>
-
-                        <h1>On-Demand Path Setup</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>In this case, we assume there is no pre-installed route. The client can send a
-                                    <button type="button" class="btn btn-primary" onclick="reserve_request()">Resource
-                                        Request
-                                    </button>
-                                    to setup the route on demand.
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator:</p>
-                                <pre><code class="json" id="reserve_request_json">
-[{
-  "id": 1,
-  "jobs": [
+                        <div class="col-9">
+                            <p>JSON object submitted to the orchestrator.</p>
+                            <pre><code class="json" id="path-query-body">
+{
+  "flows": [
     {
-      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ],
-      "demand": { "min-bw": 20000, "pass-to-dpi": true }
+      "src": "10.0.1.101",
+      "dst": "10.0.2.201"
     },
     {
-      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.1.202", "port": 5678 } ],
-      "demand": { "min-bw": 30000, "pass-to-dpi": true }
+      "src": "10.0.1.102",
+      "dst": "10.0.3.202"
     }
   ]
-}]
+}
                     </code></pre>
-                            </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-3"></div>
-                            <div class="col-9">
-                                <p>Response: </p>
-                                <pre><code class="json" id="reserve-request-result"></code></pre>
-                            </div>
-                        </div>
-
-                        <h1>Resource Discovery and Reservation</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Then we go through the same workflow as Case 1 to query the resource abstraction and
-                                    compute the optimal resource reservation for the task:
-                                    <button type="button" class="btn btn-primary" onclick="submit_task_case2()">Submit a
-                                        Task
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator:</p>
-                                <pre><code class="json" id="submit_task_json_case2">[{
-  "id": 1,
-  "jobs": [
-    {
-      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
-    },
-    {
-      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.1.202", "port": 5678 } ]
-    }
-  ]
-}]</code></pre>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The resonse show the resource state abstraction in linear constraints format.</p>
-                            </div>
-                            <div class="col-4">
-                                <p>Response: </p>
-                                <pre><code class="json" id="rsa-result-case2"></code></pre>
-                            </div>
-                            <div class="col-5">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="rsa-result-human-readable-case2"
-                                           style="margin-top: 40%"></code></pre>
-                            </div>
-                        </div>
-
-                        <hr/>
-                        <br/>
-                        <h1>Calculating and Reserving Optimal Resources</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Once the client receives the resource state abstraction (ReSA), it can do its own
-                                    policy to find the optimal resoruce reservation. We take an example how one client
-                                    uses the ReSA informantion to maximize the total throughput. Click
-                                    <button type="button" class="btn btn-primary" onclick="calculate_bandwidth_case2()">
-                                        Calculate and Reserve
-                                    </button>
-                                    to compute the optimal reservation.
-                                </p>
-                            </div>
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="bandwidth-result-case2"></code></pre>
-                            </div>
-                            <div class="col-4">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="bandwidth-result-human-readable-case2"></code></pre>
-                            </div>
-                        </div>
-
-                        <hr/>
-                        <br/>
-                        <h1>Run Task</h1>
-                        <hr/>
-                        <br/>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Now you get all you need. Just click
-                                    <button type="button" class="btn btn-primary" onclick="run_task_case2()">
-                                        Run Task
-                                    </button>
-                                    to start your data transfers.
-                                </p>
-                                <p>Of course, you can always stop your running task whenever you want
-                                    <button type="button" class="btn btn-danger" onclick="stop_task()">
-                                        Stop Task
-                                    </button>
-                                </p>
-                                <p>
-                                <p>To reproduce the demo, you can
-                                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">
-                                        Clear All
-                                    </button>
-                                    and repeat the instructions in a cleanup environment.
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>Response:</p>
-                                <pre><code class="json" id="run-task-result-case2"></code></pre>
-                            </div>
-                        </div>
-
                     </div>
-                </div>
-                <!-- End of Case 2 -->
 
-                <!-- Show Case 3 -->
-                <div class="tab-pane fade" id="case3" role="tabpanel" aria-labelledby="case3-tab">
-                    <div class="container">
-                        <div class="jumbotron">
-                            <h1>3 SDC Partners, Precomputed Routes</h1>
-                            <hr class="my-4">
-                            {#                  <pre>#}
-                            {#+------------------------+   +-------------+   +----------------+#}
-                            {#| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |#}
-                            {#|           \            |   |    /   \    |   |    /  |        |#}
-                            {#|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |#}
-                            {#|           /            |   |    \   /    |   |    \  |        |#}
-                            {#| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |#}
-                            {#+------------------------+   +-------------+   +----------------+#}
-                            {#    US Army Division 1      US Army Division 2      UK Army#}
-                            {#                  </pre>#}
-                            <embed class="bg-white" src="/static/svg/case-3.svg" type="image/svg+xml"
-                                   style="width: 100%; height: 400px;"/>
-                            <p>Summary of Case 3:</p>
-                            <p>Extension of Case 1 with: (1) there are three coalition partners, i.e., US Army Division
-                                1, US Army Division 2, and UK Army, and (2) US Army Division 1 wants to transfer both
-                                datasets using network infrastructures of all three coalition partners, and the
-                                inter-partner route is known to be US Army Division 1 -&gt; US Army Division 2 -&gt; UK
-                                Army. In this case, US Army Division 1 needs to collect bandwidth sharing information
-                                from US Army Division 2 and UK Army.</p>
+
+                    <div class="row">
+                        <div class="col-3">
+                            <p>SFP could get the AS path of given flows.</p>
                         </div>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>In case 3, we assume the client has the prior knowledge about the AS-leve path for
-                                    each flow it wants to send. The AS-level paths for all potential inter-domain flows
-                                    are listed in the right side.</p>
-                            </div>
-                            <div class="col-9">
-                                <p>Inter-domain prior knowledge:</p>
-                                <pre><code class="json">
-[
-  {"src": "10.0.1.101", "dst": "10.0.2.201", "as-path": ["172.17.1.1", "172.17.2.1"]},
-  {"src": "10.0.1.102", "dst": "10.0.2.202", "as-path": ["172.17.1.1", "172.17.2.1"]},
-  {"src": "10.0.1.101", "dst": "10.0.2.202", "as-path": ["172.17.1.1", "172.17.2.1"]},
-  {"src": "10.0.1.102", "dst": "10.0.2.201", "as-path": ["172.17.1.1", "172.17.2.1"]},
-]
-                    </code></pre>
-                            </div>
+                        <div class="col-4">
+                            <p>Result of Path Query</p>
+                            <pre><code id="path-query-result"></code></pre>
                         </div>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>
-                                    We demonstrate how the Unicorn system works with the inter-domain task in the right
-                                    side submitted.
-                                </p>
-                                <p>
-                                    <button type="button" class="btn btn-primary" onclick="submit_md_task_case3()">
-                                        Submit this Task to Try Out!
-                                    </button>
-                                </p>
-                                <p>
-                                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">Clear All
-                                    </button>
-                                </p>
-
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator: </p>
-                                <pre><code class="json" id="submit_md_task_json_case3">
-[{
-  "id": 1,
-  "jobs": [
-    {
-      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
-    },
-    {
-      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.2.202", "port": 5678 } ]
-    }
-  ]
-}]
-                    </code></pre>
-                            </div>
-                        </div><!-- Request Row End -->
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>From the known AS-level path, the orchestration system will query the resource
-                                    abstraction site to the related sites (in parallel).</p>
-                                <p>The query request for each site is shown in the right side.</p>
-                            </div>
-
-                            <div class="col-9">
-                                <p>Immediate Resource Query Requests:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code class="json" id="rsa-site1-query-case3">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": ""
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 4567
-      },
-      "ingress-point": ""
-    }
-  ]
-}</code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code class="json" id="rsa-site2-query-case3">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": "172.17.1.1"
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 4567
-      },
-      "ingress-point": "172.17.1.1"
-    }
-  ]
-}</code></pre>
-                                <p>UK Army:</p>
-                                <pre><code class="json" id="rsa-site3-query-case3">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": "172.17.2.1"
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 4567
-      },
-      "ingress-point": "172.17.2.1"
-    }
-  ]
-}</code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The orchestration system will wait for receiving all responses from different
-                                    sites.</p>
-                                <p>Then, the orchestration system will merge all the contraints from those sites to get
-                                    a global constraits set.</p>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code class="json" id="rsa-site1-result-case3"></code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code class="json" id="rsa-site2-result-case3"></code></pre>
-                                <p>UK Army:</p>
-                                <pre><code class="json" id="rsa-site3-result-case3"></code></pre>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Human Readable Response:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code id="rsa-site1-result-human-readable-case3"></code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code id="rsa-site2-result-human-readable-case3"></code></pre>
-                                <p>UK Army:</p>
-                                <pre><code id="rsa-site3-result-human-readable-case3"></code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Now, the client can calculate the optimal resource reservation based on this global
-                                    constraints set.</p>
-                                <p>
-                                    Let's click
-                                    <button type="button" class="btn btn-primary"
-                                            onclick="calculate_md_bandwidth_case3()">This Button
-                                    </button>
-                                    to try it out.
-                                </p>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="md-bandwidth-result-case3"></code></pre>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="md-bandwidth-result-human-readable-case3"></code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>
-                                    It looks good now. Let's start this cross-domain data transfer task with the
-                                    calculated optimal resource reservation!
-                                </p>
-                                <p>
-                                    <button type="button" class="btn btn-primary" onclick="start_md_task_case3()">
-                                        Start
-                                    </button>
-                                </p>
-                                <p>Of course, you can click this
-                                    <button type="button" class="btn btn-danger" onclick="stop_task()">Stop</button>
-                                    button to interrupt the running task whenever you want.
-                                </p>
-                                <p>To reproduce the demo, you can
-                                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">
-                                        Clear All
-                                    </button>
-                                    and repeat the instructions in a cleanup environment.
-                                </p>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="md-task-result-case3"></code></pre>
-                            </div>
-
-{#                            <div class="col-4">#}
-{#                                <p>Human-Readable Response:</p>#}
-{#                                <pre><code class="json" id="md-task-result-human-readable-case3"></code></pre>#}
-{#                            </div>#}
-                        </div><!-- Response Row End -->
+                        <div class="col-4">
+                            <p>Human Readable Response</p>
+                            <pre><code id="path-query-result-human-readable"></code></pre>
+                        </div>
                     </div>
-                </div>
-                <!-- End of Case 3 -->
 
-                <!-- Show Case 4 -->
-                <div class="tab-pane fade" id="case4" role="tabpanel" aria-labelledby="case4-tab">
-                    <div class="container">
-                        <div class="jumbotron">
-                            <h1>3 SDC Partners, On-Demand Routes</h1>
-                            <hr class="my-4">
-                            {#                  <pre>#}
-                            {#+------------------------+   +-------------+   +----------------+#}
-                            {#| s1 --- sw1             |   |     sw2     |   |     sw2 --- d1 |#}
-                            {#|           \            |   |    /   \    |   |    /  |        |#}
-                            {#|            sw3 --- sw4 ===== sw1     sw4 ===== sw1   |        |#}
-                            {#|           /            |   |    \   /    |   |    \  |        |#}
-                            {#| s2 --- sw2             |   |     sw3     |   |     sw3 --- d2 |#}
-                            {#+------------------------+   +-------------+   +----------------+#}
-                            {#    US Army Division 1      US Army Division 2      UK Army#}
-                            {#                  </pre>#}
-                            <embed class="bg-white" src="/static/svg/case-3.svg" type="image/svg+xml"
-                                   style="width: 100%; height: 400px;"/>
-                            <p>Summary of Case 4:</p>
-                            <p>Extension of Case 3 with: (1) the inter-partner route is unknown. In this case, US Army
-                                Division 1 needs to first collect the inter-partner route information from US Army
-                                Division 2 and UK Army. Then US Army Division queries the bandwidth sharing information
-                                of US Army Division 2 and UK Army based on the collected inter-partner route
-                                information.</p>
+                    <div class="row">
+                        <div class="col-3">
+                            <p>
+                                After getting the AS-level path, the orchestrator could ask each network for the
+                                resource limits of submitted flows. The orchestrator would send queries to different
+                                domains concurrently.
+                            </p>
+                            <p>
+                                <button type="button" class="btn btn-primary" onclick="submit_md_task_case3()">
+                                    Submit this Task to Try Out!
+                                </button>
+                            </p>
+
                         </div>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="container">
-                                    <p>In some scenarios, the client does not know the AS-level path information about
-                                        the flows it wants to start. We will show how the orchestration system works in
-                                        these scenarios.</p>
-                                    <p>Each site will be installed a domain agent to explore the AS next hop for the
-                                        potential flows. Each domain agent will run an SFP speaker to interactive with
-                                        its peered site. For those flows one site does not know how to forward, the SFP
-                                        speaker will send the request to its peered and get the reply to make the
-                                        forwarding decision.</p>
-                                    <p>Then the orchestrator can send the path query request to each domain agent to get
-                                        the information of the next AS hop</p>
-                                    <p>Click
-                                        <button type="button" class="btn btn-primary" onclick="as_path_query()">Query
-                                            AS-Level Path
-                                        </button>
-                                        to get the AS-level path by query the domain agents sequentially.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator: </p>
-                                <pre><code class="json" id="as_path_query_json">
+                        <div class="col-9">
+                            <p>JSON object summitted to orchestrator: </p>
+                            <pre><code class="json" id="submit_md_task_json">
 [{
   "id": 1,
   "jobs": [
@@ -1001,224 +471,97 @@
     },
     {
       "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.2.202", "port": 5678 } ]
+      "potential_dsts": [ { "ip": "10.0.3.202", "port": 5678 } ]
     }
   ]
 }]
                     </code></pre>
-                            </div>
-                        </div><!-- Request Row End -->
+                        </div>
+                    </div><!-- Request Row End -->
 
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The response received from each domain shown in the right side.</p>
-                            </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <p>The orchestration system will wait for receiving all responses from different
+                                sites.</p>
+                            <p>Then, the orchestration system will merge all the contraints from those sites to get
+                                a global constraits set.</p>
+                        </div>
 
-                            <div class="col-9">
-                                <p>Response:</p>
-                                <pre><code type="json" id="as-path-result1"></code></pre>
-                                <pre><code type="json" id="as-path-result2"></code></pre>
-                                <pre><code type="json" id="as-path-result3"></code></pre>
-                            </div>
+                        <div class="col-4">
+                            <p>Response:</p>
 
-                        </div><!-- Response Row End -->
+                            <pre><code class="json" id="rsa-result"></code></pre>
+                        </div>
 
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Then we go through the same workflow as Case 3 to query the multi-domain resource
-                                    abstraction and compute the optimal resource reservation for the task.</p>
-                                <p>
-                                    <button type="button" class="btn btn-primary" onclick="submit_md_task_case4()">
-                                        Submit this Task to Try Out!
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="col-9">
-                                <p>JSON object summitted to orchestrator: </p>
-                                <pre><code class="json" id="submit_md_task_json_case4">
-[{
-  "id": 1,
-  "jobs": [
-    {
-      "potential_srcs": [ { "ip": "10.0.1.101", "port": 1234 } ],
-      "potential_dsts": [ { "ip": "10.0.1.201", "port": 2345 } ]
-    },
-    {
-      "potential_srcs": [ { "ip": "10.0.1.102", "port": 3456 } ],
-      "potential_dsts": [ { "ip": "10.0.2.202", "port": 5678 } ]
-    }
-  ]
-}]
-                    </code></pre>
-                            </div>
-                        </div><!-- Request Row End -->
+                        <div class="col-4">
+                            <p>Human Readable Response:</p>
+                            <p>Domain-1</p>
+                            <pre><code id="rsa-site1-result-human-readable-case3"></code></pre>
+                            <p>Domain-2</p>
+                            <pre><code id="rsa-site2-result-human-readable-case3"></code></pre>
+                            <p>Domain-3</p>
+                            <pre><code id="rsa-site3-result-human-readable-case3"></code></pre>
+                        </div>
+                    </div><!-- Response Row End -->
 
-                        <div class="row">
-                            <div class="col-3">
-                                <p>From the received AS-level path, the orchestration system will query the resource
-                                    abstraction site to the related sites (in parallel).</p>
-                                <p>The query request for each site is shown in the right side.</p>
-                            </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <p>Now, the client can calculate the optimal resource reservation based on this global
+                                constraints set.</p>
+                            <p>
+                                Let's click
+                                <button type="button" class="btn btn-primary"
+                                        onclick="calculate_md_bandwidth_case3()">This Button
+                                </button>
+                                to try it out.
+                            </p>
+                        </div>
 
-                            <div class="col-9">
-                                <p>Immediate Resource Query Requests:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code class="json" id="rsa-site1-query-case4">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": ""
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 5678
-      },
-      "ingress-point": ""
-    }
-  ]
-}</code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code class="json" id="rsa-site2-query-case4">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": "172.17.1.1"
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 4567
-      },
-      "ingress-point": "172.17.1.1"
-    }
-  ]
-}</code></pre>
-                                <p>UK Army:</p>
-                                <pre><code class="json" id="rsa-site3-query-case4">{
-  "query-desc": [
-    {
-      "flow": {
-        "flow-id": 1,
-        "src-ip": "10.0.1.101", "src-port": 1234,
-        "dst-ip": "10.0.2.201", "dst-port": 2345
-      },
-      "ingress-point": "172.17.2.1"
-    },
-    {
-      "flow": {
-        "flow-id": 2,
-        "src-ip": "10.0.1.102", "src-port": 3456,
-        "dst-ip": "10.0.2.202", "dst-port": 4567
-      },
-      "ingress-point": "172.17.2.1"
-    }
-  ]
-}</code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
+                        <div class="col-4">
+                            <p>Response:</p>
+                            <pre><code class="json" id="md-bandwidth-result-case3"></code></pre>
+                        </div>
 
-                        <div class="row">
-                            <div class="col-3">
-                                <p>The orchestration system will wait for receiving all responses from different
-                                    sites.</p>
-                                <p>Then, the orchestration system will merge all the contraints from those sites to get
-                                    a global constraits set.</p>
-                            </div>
+                        <div class="col-4">
+                            <p>Human-Readable Response:</p>
+                            <pre><code class="json" id="md-bandwidth-result-human-readable-case3"></code></pre>
+                        </div>
+                    </div><!-- Response Row End -->
 
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code class="json" id="rsa-site1-result-case4"></code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code class="json" id="rsa-site2-result-case4"></code></pre>
-                                <p>UK Army:</p>
-                                <pre><code class="json" id="rsa-site3-result-case4"></code></pre>
-                            </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <p>
+                                It looks good now. Let's start this cross-domain data transfer task with the
+                                calculated optimal resource reservation!
+                            </p>
+                            <p>
+                                <button type="button" class="btn btn-primary" onclick="start_md_task_case3()">
+                                    Start
+                                </button>
+                            </p>
+                            <p>Of course, you can click this
+                                <button type="button" class="btn btn-danger" onclick="stop_task()">Stop</button>
+                                button to interrupt the running task whenever you want.
+                            </p>
+                            <p>To reproduce the demo, you can
+                                <button type="button" class="btn btn-secondary" onclick="clear_texts()">
+                                    Clear All
+                                </button>
+                                and repeat the instructions in a cleanup environment.
+                            </p>
+                        </div>
 
-                            <div class="col-4">
-                                <p>Human Readable Response:</p>
-                                <p>US Army Division 1:</p>
-                                <pre><code id="rsa-site1-result-human-readable-case4"></code></pre>
-                                <p>US Army Division 2:</p>
-                                <pre><code id="rsa-site2-result-human-readable-case4"></code></pre>
-                                <p>UK Army:</p>
-                                <pre><code id="rsa-site3-result-human-readable-case4"></code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
+                        <div class="col-4">
+                            <p>Response:</p>
+                            <pre><code class="json" id="md-task-result-case3"></code></pre>
+                        </div>
 
-                        <div class="row">
-                            <div class="col-3">
-                                <p>Now, the client can calculate the optimal resource reservation based on this global
-                                    constraints set.</p>
-                                <p>
-                                    Let's click
-                                    <button type="button" class="btn btn-primary"
-                                            onclick="calculate_md_bandwidth_case4()">This Button
-                                    </button>
-                                    to try it out.
-                                </p>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="md-bandwidth-result-case4"></code></pre>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="md-bandwidth-result-human-readable-case4"></code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
-
-                        <div class="row">
-                            <div class="col-3">
-                                <p>
-                                    It looks good now. Let's start this cross-domain data transfer task with the
-                                    calculated optimal resource reservation!
-                                </p>
-                                <p>
-                                    <button type="button" class="btn btn-primary" onclick="start_md_task_case4()">
-                                        Start
-                                    </button>
-                                </p>
-                                <p>Of course, you can click this
-                                    <button type="button" class="btn btn-danger" onclick="stop_task()">Stop</button>
-                                    button to interrupt the running task whenever you want.
-                                </p>
-                                <p>To reproduce the demo, you can
-                                    <button type="button" class="btn btn-secondary" onclick="clear_texts()">
-                                        Clear All
-                                    </button>
-                                    and repeat the instructions in a cleanup environment.
-                                </p>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Response:</p>
-                                <pre><code class="json" id="md-task-result-case4"></code></pre>
-                            </div>
-
-                            <div class="col-4">
-                                <p>Human-Readable Response:</p>
-                                <pre><code class="json" id="md-task-result-human-readable-case4"></code></pre>
-                            </div>
-                        </div><!-- Response Row End -->
-
-                    </div>
+                        {#                            <div class="col-4">#}
+                        {#                                <p>Human-Readable Response:</p>#}
+                        {#                                <pre><code class="json" id="md-task-result-human-readable-case3"></code></pre>#}
+                        {#                            </div>#}
+                    </div><!-- Response Row End -->
                 </div>
-                <!-- End of Case 4 -->
-
             </div>
             <!-- End of Show Cases -->
 
@@ -1260,21 +603,17 @@
 </footer>
 
 <script type="text/javascript">
-  clear_texts();
+    clear_texts();
 
-  var dashboard_url = "/dashboard#source=/static/dashboard.json"
+    var dashboard_url = "/dashboard#source=/static/dashboard.json"
 
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    var target = $(e.target).attr("href") // activated tab
-    if (target == "#case1" || target == "#case2") {
-      dashboard_url = "/dashboard#source=/static/dashboard.json"
-    } else if (target == "#case3" || target == "#case4") {
-      dashboard_url = "/dashboard#source=/static/dashboard2.json"
-    }
-    $('#dashboard-show').attr("src", dashboard_url)
-    $('#dashboard-full-screen').attr("href", dashboard_url)
-    document.getElementById('dashboard-show').contentWindow.location.reload();
-  });
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        dashboard_url = "/dashboard#source=/static/dashboard.json"
+        $('#dashboard-show').attr("src", dashboard_url)
+        $('#dashboard-full-screen').attr("href", dashboard_url)
+        document.getElementById('dashboard-show').contentWindow.location.reload();
+    });
 </script>
 </body>
 </html>

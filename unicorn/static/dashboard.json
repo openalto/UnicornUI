@@ -22,7 +22,7 @@
 				{
 					"type": "text_widget",
 					"settings": {
-						"title": "s1 sending rate",
+						"title": "DTN 1 sending rate",
 						"size": "regular",
 						"value": "(datasources[\"System Dashboard Flask\"][\"s1-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
@@ -51,9 +51,9 @@
 				{
 					"type": "text_widget",
 					"settings": {
-						"title": "d1 sending rate",
+						"title": "DTN 3 sending rate",
 						"size": "regular",
-						"value": "(datasources[\"System Dashboard Flask\"][\"s3-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+						"value": "(datasources[\"System Dashboard Flask\"][\"s4-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
 						"animate": false,
 						"units": "Mbps"
@@ -80,9 +80,9 @@
 				{
 					"type": "text_widget",
 					"settings": {
-						"title": "s2 sending rate",
+						"title": "DTN 2 sending rate",
 						"size": "regular",
-						"value": "(datasources[\"System Dashboard Flask\"][\"s2-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+						"value": "(datasources[\"System Dashboard Flask\"][\"s1-eth2\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
 						"animate": false,
 						"units": "Mbps"
@@ -109,9 +109,9 @@
 				{
 					"type": "text_widget",
 					"settings": {
-						"title": "d2 sending rate",
+						"title": "DTN 4 sending rate",
 						"size": "regular",
-						"value": "(datasources[\"System Dashboard Flask\"][\"s4-eth1\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
+						"value": "(datasources[\"System Dashboard Flask\"][\"s8-eth2\"][\"received_bytes_sec\"] / 125000).toFixed(3)",
 						"sparkline": true,
 						"animate": false,
 						"units": "Mbps"
