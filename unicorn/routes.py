@@ -7,7 +7,8 @@ from flask import render_template, send_from_directory, request, jsonify
 
 import requests
 import json
-
+import random
+import time
 
 @app.route('/')
 def index():
@@ -33,12 +34,16 @@ def _submit_task():
 
 @app.route("/_calculate_bandwidth")
 def _calculate_bandwidth():
-    print(request.args.get('text'))
-    req_str = request.args.get('text')
-    print(req_str)
-    r = requests.post(app.config["CALCULATE_BANDWIDTH_URL"], data=req_str, headers={'content-type': 'application/json'})
-    print(r.text)
-    return jsonify(result=r.text)
+    # print(request.args.get('text'))
+    # req_str = request.args.get('text')
+    # print(req_str)
+    # r = requests.post(app.config["CALCULATE_BANDWIDTH_URL"], data=req_str, headers={'content-type': 'application/json'})
+    # print(r.text)
+    # return jsonify(result=r.text)
+
+    time.sleep(random.random() * 1.5)
+    r = {"flows": [{"flow-id": 1, "bandwidth": 40000000.0}, {"flow-id": 2, "bandwidth": 60000000.0}]}
+    return jsonify(result=json.dumps(r))
 
 
 @app.route("/_calculate_bandwidth_interdomain")
@@ -60,9 +65,13 @@ def _calculate_bandwidth_interdomain():
 
 @app.route("/_run_task")
 def _run_task():
-    req_str = request.args.get('text')
-    r = requests.post(app.config["RUN_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
-    return jsonify(result=r.text)
+    # req_str = request.args.get('text')
+    # r = requests.post(app.config["RUN_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
+    # return jsonify(result=r.text)
+    time.sleep(random.random())
+    # TODO: run a script
+    r = {"result": "OK"}
+    return jsonify(result=json.dumps(r))
 
 
 @app.route("/_run_task_interdomain")
@@ -75,7 +84,8 @@ def _run_task_interdomain():
 
 @app.route("/_stop_task")
 def _stop_task():
-    r = requests.post(app.config["STOP_TASK_URL"])
+    # r = requests.post(app.config["STOP_TASK_URL"])
+    # TODO: replace this
     return jsonify(result=r.text)
 
 
@@ -95,16 +105,25 @@ def _resource_query():
 
 @app.route("/_path_query")
 def _path_query():
-    req_str = request.args.get('text')
-    r = requests.post(app.config["PATH_QUERY_URL"], data=req_str, headers={'content-type': 'application/json'})
-    return jsonify(result=r.text)
+    # req_str = request.args.get('text')
+    # r = requests.post(app.config["PATH_QUERY_URL"], data=req_str, headers={'content-type': 'application/json'})
+    # return jsonify(result=r.text)
+
+    time.sleep(random.random() * 2)
+    r = {"flow-paths": [[0, 1], [0, 1, 2]], "path-property": [{"domain-id": "Domain-1", "ingress-port": None, "egress-port": "openflow:1:3"}, {"domain-id": "Domain-2", "ingress-port": "openflow:4:2", "egress-port": "openflow:4:3"}, {"domain-id": "Domain-3", "ingress-port": "openflow:6:2", "egress-port": None}]}
+    return jsonify(result=json.dumps(r))
 
 
 @app.route("/_resource_query_interdomain")
 def _resource_query_interdomain():
-    req_str = request.args.get('text')
-    r = requests.post(app.config["SUBMIT_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
-    return jsonify(result=r.text)
+    # req_str = request.args.get('text')
+    # r = requests.post(app.config["SUBMIT_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
+    # return jsonify(result=r.text)
+
+
+    time.sleep(random.random() * 2)
+    r = {"Domain-1": {"anes": [{"availbw": 100000000}], "ane-matrix": [[{"flow-id": "2"}, {"flow-id": "1"}]]}, "Domain-2": {"anes": [{"availbw": 40000000}, {"availbw": 100000000}], "ane-matrix": [[{"flow-id": "1"}], [{"flow-id": "2"}]]}, "Domain-3": {"anes": [{"availbw": 100000000}], "ane-matrix": [[{"flow-id": "2"}]]}}
+    return jsonify(result=json.dumps(r))
 
 
 @app.route("/_network_data")
