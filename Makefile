@@ -1,4 +1,5 @@
 PYTHON=python
+WORKON_BIN=${HOME}/Env/unicorn/bin
 
 dependencies:
 	pip install -r requirements.txt
@@ -13,4 +14,4 @@ install-local: dependencies-local
 	${PYTHON} setup.py install --user
 
 run:
-	gunicorn -b 0.0.0.0:4567 -w 4 unicorn:app
+	${WORKON_BIN}/gunicorn -b 0.0.0.0:4567 -w 4 unicorn:app

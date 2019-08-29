@@ -103,6 +103,7 @@ def _path_query():
 @app.route("/_resource_query_interdomain")
 def _resource_query_interdomain():
     req_str = request.args.get('text')
+    print(req_str)
     r = requests.post(app.config["SUBMIT_TASK_URL"], data=req_str, headers={'content-type': 'application/json'})
     return jsonify(result=r.text)
 
